@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Key Logger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #keyList, #eventList {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            width: 45%;
+        }
+        #output{
+            display: flex;
+            gap: 4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Key Logger</h1>
+    <div>
+        <input type="text" id="keyInput" placeholder="Type here..." autofocus>
+    </div>
+    <div id="output">
+        <div id="keyList"></div>
+        <div id="eventList"></div>
+    </div>
+
+
+    <script>
+        const keyInput = document.getElementById('keyInput');
+        const keyList = document.getElementById('keyList');
+        const eventList = document.getElementById('eventList');
+
+        const eventsToListen = [
+            'keydown', 'keyup', 'keypress', 'focus', 'blur', 'change', 'input',
+            'click', 'dblclick', 'mouseover', 'mouseout', 'mouseenter', 'mouseleave',
+            'contextmenu', 'paste', 'cut', 'copy', 'drag', 'drop'
+        ];
+
+        function logKey(event, eventType) {
+            const keyItem = document.createElement('div');
+            keyItem.textContent = `Type: ${eventType} | Key: ${event.key || 'N/A'} | Code: ${event.code || 'N/A'}`;
+            keyList.appendChild(keyItem);
+
+            // Keep the scroll at the bottom
+            keyList.scrollTop = keyList.scrollHeight;
+        }
+
+        function logEvent(event, eventType) {
+            const eventItem = document.createElement('div');
+            eventItem.textContent = `Event: ${eventType}`;
+            eventList.appendChild(eventItem);
+
+            // Keep the scroll at the bottom
+            eventList.scrollTop = eventList.scrollHeight;
+        }
+
+        eventsToListen.forEach(eventType => {
+            keyInput.addEventListener(eventType, (event) => {
+                logEvent(event, eventType);
+                if (eventType === 'keydown' || eventType === 'keyup' || eventType === 'keypress') {
+                    logKey(event, eventType);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
