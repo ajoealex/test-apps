@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appium Source and Screenshot Alignment</title>
+</head>
+
+<body>
+    <div id="controls">
+        <h2>Upload Appium Source and Screenshot</h2>
+        <label for="sourceFile">Upload XML Source:</label>
+        <input type="file" id="sourceFile" accept=".xml, .html"><br><br>
+        <label for="screenshotFile">Upload Screenshot:</label>
+        <input type="file" id="screenshotFile" accept="image/*"><br><br>
+        <button id="debugButton">Debug</button>
+    </div>
+
+    <div id="appium_root"></div>
+
+    <script>
+        window.app_resolution = {};
+
+        function setElementBoundingBox() {
+
+            function getElementCoords(elem, isIOS) {
+                let coords = {
+                    x: null,
+                    y: null,
+                    width: null,
+                    height: null
+                };
+                if (isIOS) {
+                    coords.x = elem.getAttribute('x');
+                    coords.y = elem.getAttribute('y');
+                    coords.width = elem.getAttribute('width');
+                    coords.height = elem.getAttribute('height');
+
+                } else {
+                    let bounds = elem.getAttribute('bounds').replaceAll('][', ';').replaceAll('[', '').replaceAll(']', '').split(';');
+                    coords.x = bounds[0].split(',')[0]
+                    coords.y = bounds[0].split(',')[1]
+                    x2 = bounds[1].split(',')[0]
+                    y2 = bounds[1].split(',')[1]
+                    coords.width = x2 - coords.x;
+                    coords.height = y2 - coords.y;
+                }
+                return coords;
+            }
+            document.body.style.padding = 0;
+            document.body.style.margin = 0;
+            let isIOS = true;
+            let appium_ui_root = document.querySelector('appiumaut');
+            if (!appium_ui_root) {
+                appium_ui_root = document.querySelector('hierarchy');
+                isIOS = false;
+            }
+            let immediate_child = appium_ui_root.children[0]
+            window.app_resolution = {
+                width: getElementCoords(immediate_child, isIOS).width,
+                height: getElementCoords(immediate_child, isIOS).height
+            }
+            const [...all_elems] = appium_ui_root.querySelectorAll('*');
+            console.log(all_elems)
+            all_elems.forEach(elem => {
+                let x = getElementCoords(elem, isIOS).x;
+                let y = getElementCoords(elem, isIOS).y;
+                let width = getElementCoords(elem, isIOS).width;
+                let height = getElementCoords(elem, isIOS).height;
+                let visible = (isIOS ? elem.getAttribute('visible') : elem.getAttribute('displayed')).includes('true');
+
+                elem.style.position = 'fixed';
+                elem.style.left = x+'px';
+                elem.style.top = y+'px';
+                elem.style.width = width+'px';
+                elem.style.height = height+'px';
+                elem.style.border = '1px solid black';
+                if (visible) {
+                    elem.style.display = 'block';
+                }
+            }
+            )
+        }
+
+        function loadImage(dimensions) {
+            let img = new Image();
+            let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d');
+            document.body.appendChild(canvas);
+            img.src = window.screenshotSrc;
+            img.addEventListener('load', function() {
+                canvas.width = dimensions.width;
+                canvas.height = dimensions.height;
+                ctx.drawImage(img, 0, 0, dimensions.width, dimensions.height);
+            });
+        }
+
+
+        
+
+        document.getElementById('debugButton').addEventListener('click', function () {
+            const sourceFile = document.getElementById('sourceFile').files[0];
+            const screenshotFile = document.getElementById('screenshotFile').files[0];
+
+            if (sourceFile && screenshotFile) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const xmlContent = e.target.result;
+                    document.getElementById('appium_root').innerHTML = xmlContent;
+
+        // loadImage(app_resolution)
+                    const imgReader = new FileReader();
+                    imgReader.onload = function (event) {
+                        window.screenshotSrc = event.target.result;
+                        setElementBoundingBox();
+                        loadImage(window.app_resolution);
+                    };
+                    imgReader.readAsDataURL(screenshotFile);
+                };
+                reader.readAsText(sourceFile);
+                controls.parentNode.removeChild(controls)
+
+            } else {
+                alert("Please upload both XML source and screenshot.");
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Width Text Cutter</title>
+    <!-- Include Tailwind CSS from CDN -->
+    <script src="tailwindcss.js"></script>
+</head>
+<body class="p-8 font-sans bg-gray-100">
+
+<h2 class="text-2xl font-bold mb-4">Fixed Width Text Cutter</h2>
+
+<textarea id="inputText" placeholder="Enter the first row of the fixed width file here..." class="w-full h-24 p-2 border border-gray-300 rounded-md mb-4"></textarea>
+
+<input type="text" id="widths" placeholder="Enter comma separated fixed width numbers..." class="w-full p-2 border border-gray-300 rounded-md mb-4">
+
+<button id="cutButton" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">Cut</button>
+
+<!-- Display total fixed width and total line length -->
+<div id="infoSection" class="mt-4 font-bold text-lg"></div>
+
+<!-- Main Div to hold all cut divs -->
+<div id="mainOutput" class="mt-4 p-4 border border-gray-300 bg-white rounded-md"></div>
+
+
+
+<script>
+    document.getElementById('cutButton').addEventListener('click', function() {
+        const inputText = document.getElementById('inputText').value;
+        const widths = document.getElementById('widths').value.split(',').map(Number);
+
+        let mainOutputDiv = document.getElementById('mainOutput');
+        mainOutputDiv.innerHTML = ''; // Clear previous output
+
+        let start = 0;
+
+        // Create a main div to wrap all cuts
+        let mainDiv = document.createElement('div');
+        mainDiv.classList.add('space-y-2'); // Tailwind utility for vertical spacing between child elements
+
+        widths.forEach(function(width,index) {
+            let segment = inputText.substr(start, width);
+            let end = start + width - 1;
+
+            // Create a div to wrap the cut, its length, and its position
+            let cutWrapper = document.createElement('div');
+            cutWrapper.classList.add('flex', 'items-center', 'space-x-4'); // Flexbox for horizontal alignment
+            
+            // Create a div for each cut
+            let cutDiv = document.createElement('div');
+            cutDiv.classList.add('cut-wrapper', 'p-2', 'border', 'border-gray-300', 'bg-amber-100', 'rounded-md', 'whitespace-pre-wrap');
+            cutDiv.textContent = segment; // Text content to preserve spaces and avoid HTML injection
+            
+            // Create a span to show the cut length
+            let lengthSpan = document.createElement('span');
+            lengthSpan.classList.add('text-sm', 'bg-lime-100', 'font-mono');
+            lengthSpan.textContent = `Length: ${segment.length}`;
+
+            // Create a span to show the start and end positions
+            let positionSpan = document.createElement('span');
+            positionSpan.classList.add('text-sm', 'bg-lime-100', 'font-mono');
+            positionSpan.textContent = `Start: ${start+1}, End: ${end+1}`; // Adjusted for 0-based indexing
+
+            let indexSpan = document.createElement('span');
+            indexSpan.classList.add('text-sm', 'text-green-700','bg-lime-100', 'font-mono',);
+            indexSpan.textContent = `Index: ${index+1}`; // Adjusted for 0-based indexing
+            // Append the cut div, length span, and position span to the wrapper
+            cutWrapper.appendChild(cutDiv);
+            cutWrapper.appendChild(positionSpan);
+            cutWrapper.appendChild(indexSpan);
+            cutWrapper.appendChild(lengthSpan);
+
+
+            // Append the cut wrapper to the main div
+            mainDiv.appendChild(cutWrapper);
+
+            start += width;
+        });
+
+        // Append the main div to the main output
+        mainOutputDiv.appendChild(mainDiv);
+
+        // Calculate the total of the fixed widths
+        const totalFixedWidth = widths.reduce((a, b) => a + b, 0);
+
+        // Calculate the total length of the input line
+        const totalLineLength = inputText.length;
+
+        // Display the total fixed width and total line length
+        let infoSection = document.getElementById('infoSection');
+        infoSection.innerHTML = `Total of Fixed Widths: ${totalFixedWidth} <br> Total Line Length: ${totalLineLength}`;
+    });
+</script>
+
+</body>
+</html>
