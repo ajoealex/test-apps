@@ -1,0 +1,721 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="tailwind.js"></script>
+</head>
+
+<body class="bg-gray-100 p-10">
+    <div class=""
+        contenteditable="false" translate="no" focus="" data-readonly="true">
+		<h1 class="text-center text-3xl font-bold leading-tight text-gray-900">ACCELQ Docker Run Command Generator</h1>
+        <p class="is-empty"><br class="ProseMirror-trailingBreak"></p>
+        <div class="m-5 border-2 p-5">
+            <form id="dockerForm" onsubmit="processForm(event);">
+              <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                <!-- Agent Name (Mandatory) -->
+                <div>
+                  <label for="agent_name" class="block text-sm font-medium text-gray-700">Agent Name</label>
+                  <input type="text" name="agent_name" id="agent_name" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter agent name" required oninput="this.value = this.value.replace(/\s/g, '')">
+                </div>
+          
+                <!-- Concurrent Jobs (Mandatory) -->
+                <div>
+                  <label for="num_concurrent_jobs" class="block text-sm font-medium text-gray-700">Concurrent
+                    Jobs</label>
+                  <input type="number" name="num_concurrent_jobs" id="num_concurrent_jobs" value="1" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="1" required>
+                </div>
+          
+                <!-- Parallel Test Cases Per Job (Mandatory) -->
+                <div>
+                  <label for="num_parallel_tc_per_job" class="block text-sm font-medium text-gray-700">Parallel Test
+                    Cases
+                    Per Job</label>
+                  <input type="number" name="num_parallel_tc_per_job" id="num_parallel_tc_per_job" value="1" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="3" required>
+                </div>
+          
+                <!-- AccelQ Server URL (Mandatory) -->
+                <div>
+                  <label for="accelq_server_url" class="block text-sm font-medium text-gray-700">AccelQ Server
+                    URL</label>
+                  <input type="url" name="accelq_server_url" id="accelq_server_url" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter server URL" required>
+                </div>
+          
+                <!-- User ID (Mandatory) -->
+                <div>
+                  <label for="user_id" class="block text-sm font-medium text-gray-700">User ID</label>
+                  <input type="email" name="user_id" id="user_id" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter user ID" required>
+                </div>
+          
+                <!-- API Key (Mandatory) -->
+                <div>
+                  <label for="api_key" class="block text-sm font-medium text-gray-700">API Key</label>
+                  <input type="text" name="api_key" id="api_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter API key" required>
+                </div>
+          
+                <!-- Tenant Code (Mandatory) -->
+                <div>
+                  <label for="tenant_code" class="block text-sm font-medium text-gray-700">Tenant Code</label>
+                  <input type="text" name="tenant_code" id="tenant_code" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter tenant code" required>
+                </div>
+          
+                <!-- Agent Type (Mandatory) -->
+                <div>
+                  <label for="agent_type" class="block text-sm font-medium text-gray-700">Agent Type</label>
+                  <select name="agent_type" id="agent_type" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="User">User</option>
+                    <option value="Tenant">Tenant</option>
+                  </select>
+                </div>
+          
+              </div>
+              <!-- Add more optional fields as needed -->
+          
+              <!-- Optional Fields -->
+              <div class="">
+          
+                <div class="flex flex-row gap-6">
+                  <div>
+                    <label for="use_provider_for_web" class="block text-sm font-medium text-gray-700">Use external
+                      provider
+                      for Web</label>
+                    <input type="checkbox" name="use_provider_for_web" id="use_provider_for_web" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onclick="toggleProviderSection(event,'web')">
+                  </div>
+                  <div>
+                    <label for="use_provider_for_mobile" class="block text-sm font-medium text-gray-700">Use
+                      external
+                      provider
+                      for Mobile</label>
+                    <input type="checkbox" name="use_provider_for_mobile" id="use_provider_for_mobile" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onclick="toggleProviderSection(event,'mobile')">
+                  </div>
+                </div>
+                <div class="flex flex-row gap-6 mt-6">
+                  <div id="web_provider_name_section" style="display: none;" class="w-1/2">
+                    <label for="web_provider_type" class="block text-sm font-medium text-gray-700">Web
+                      Provider</label>
+                    <select name="web_provider_type" id="web_provider_type" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onchange="toggleProviderVendorSection(event,'web')">
+                      <option value="">Select an option</option>
+                      <option value="BROWSER_STACK">Browser Stack</option>
+                      <option value="SAUCE_LABS">Sauce Labs</option>
+                      <option value="PERFECTO">Perfecto</option>
+                      <option value="LAMBDATEST">Lambdatest</option>
+                      <option value="HEADSPIN">HeadSpin</option>
+                      <option value="DIGITAL_AI">Digital AI</option>
+          
+                    </select>
+                  </div>
+                  <div id="mobile_provider_name_section" style="display: none;" class="w-1/2">
+                    <label for="mobile_provider_type" class="block text-sm font-medium text-gray-700">Mobile
+                      Provider</label>
+                    <select name="mobile_provider_type" id="mobile_provider_type" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onchange="toggleProviderVendorSection(event,'mobile')">
+                      <option value="">Select an option</option>
+                      <option value="BROWSER_STACK">Browser Stack</option>
+                      <option value="SAUCE_LABS">Sauce Labs</option>
+                      <option value="PERFECTO">Perfecto</option>
+                      <option value="LAMBDATEST">Lambdatest</option>
+                      <option value="HEADSPIN">HeadSpin</option>
+                      <option value="DIGITAL_AI">Digital AI</option>
+          
+                    </select>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-6 w-1/2 provider_details mt-6">
+          
+                  <!-- remote provider for web -->
+          
+                  <!-- Browserstack -->
+                  <div id="web_browserstack" class='remote_provider_block remote_web_provider_block' style="display: none;">
+                    Web Provider:
+                    <div>
+                      <label for="web_browserstack_username" class="block text-sm font-medium text-gray-700">BrowserStack
+                        Username</label>
+                      <input type="text" name="web_browserstack_username" id="web_browserstack_username" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter BrowserStack username">
+                    </div>
+          
+                    <div>
+                      <label for="web_browserstack_access_key" class="block text-sm font-medium text-gray-700">BrowserStack
+                        Access Key</label>
+                      <input type="text" name="web_browserstack_access_key" id="web_browserstack_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter BrowserStack access Key">
+                    </div>
+                  </div>
+                  <div id="web_saucelabs" class="grid grid-cols-2 gap-6 remote_provider_block remote_web_provider_block" style="display: none;">
+                    Web Provider:
+                    <div>
+                      <label for="web_saucelabs_username" class="block text-sm font-medium text-gray-700">Saucelabs
+                        Username</label>
+                      <input type="text" name="web_saucelabs_username" id="web_saucelabs_username" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Saucelabs username">
+                    </div>
+          
+                    <div>
+                      <label for="web_saucelabs_access_key" class="block text-sm font-medium text-gray-700">Saucelabs
+                        Access
+                        Key</label>
+                      <input type="text" name="web_saucelabs_access_key" id="web_saucelabs_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Saucelabs Access Key">
+                    </div>
+          
+                    <div>
+                      <label for="web_saucelabs_connect_hostname" class="block text-sm font-medium text-gray-700">Saucelabs
+                        connect hostname</label>
+                      <input type="text" name="web_saucelabs_connect_hostname" id="web_saucelabs_connect_hostname" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter connect hostname">
+                    </div>
+                    <div>
+                      <label for="web_saucelabs_connect_port" class="block text-sm font-medium text-gray-700">Saucelabs
+                        connect port</label>
+                      <input type="number" name="web_saucelabs_connect_port" id="web_saucelabs_connect_port" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter connect port">
+                    </div>
+          
+                    <div>
+                      <label for="web_saucelabs_datacenter_endpoint" class="block text-sm font-medium text-gray-700">Saucelabs
+                        datacenter endpoint</label>
+                      <select name="web_saucelabs_datacenter_endpoint" id="web_saucelabs_datacenter_endpoint" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="">Select an option</option>
+                        <option value="us-west-1">US West 1</option>
+                        <option value="eu-central-1">EU Central 1</option>
+                        <option value="us-east-1">Headless US-East</option>
+          
+                      </select>
+                    </div>
+                  </div>
+          
+                  <div id="web_perfecto" class="remote_provider_block remote_web_provider_block" style="display: none;">
+                    Web Provider:
+                    <div>
+                      <label for="web_perfecto_username" class="block text-sm font-medium text-gray-700">Perfecto
+                        Username</label>
+                      <input type="text" name="web_perfecto_username" id="web_perfecto_username" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Perfecto username">
+                    </div>
+          
+                    <div>
+                      <label for="web_perfecto_access_key" class="block text-sm font-medium text-gray-700">Perfecto
+                        Access
+                        Key</label>
+                      <input type="text" name="web_perfecto_access_key" id="web_perfecto_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Perfecto Access Key">
+                    </div>
+                  </div>
+          
+                  <div id="web_lambdatest" class="remote_provider_block remote_web_provider_block" style="display: none;">
+                    Web Provider:
+                    <div>
+                      <label for="web_lambdatest_username" class="block text-sm font-medium text-gray-700">Lambdatest
+                        Username</label>
+                      <input type="text" name="web_lambdatest_username" id="web_lambdatest_username" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Lambdatest username">
+                    </div>
+          
+                    <div>
+                      <label for="web_lambdatest_access_key" class="block text-sm font-medium text-gray-700">Lambdatest
+                        Access
+                        Key</label>
+                      <input type="text" name="web_lambdatest_access_key" id="web_lambdatest_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Lambdatest Access Key">
+                    </div>
+                  </div>
+                  <div id="web_headspin" class="remote_provider_block remote_web_provider_block" style="display: none;">
+                    Web Provider:
+                    <div>
+                      <label for="web_headspin_access_key" class="block text-sm font-medium text-gray-700">HeadSpin
+                        Access
+                        Key</label>
+                      <input type="text" name="web_headspin_access_key" id="web_headspin_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter HeadSpin Access Key">
+                    </div>
+                  </div>
+                  <div id="web_digitalai" class="remote_provider_block remote_web_provider_block" style="display: none;">
+                    Web Provider:
+                    <div>
+                      <label for="web_digitalai_server_url" class="block text-sm font-medium text-gray-700">Digital AI
+                        Server
+                        URL</label>
+                      <input type="text" name="web_digitalai_server_url" id="web_digitalai_server_url" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter AI Server URL">
+                    </div>
+                    <div>
+                      <label for="web_digitalai_access_key" class="block text-sm font-medium text-gray-700">Digital AI
+                        Access
+                        Key</label>
+                      <input type="text" name="web_digitalai_access_key" id="web_digitalai_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Digital AI Access Key">
+                    </div>
+                  </div>
+          
+                  <!-- remote provider for mobile -->
+          
+                  <!-- Browserstack -->
+                  <div id="mobile_browserstack" class='remote_provider_block remote_mobile_provider_block' style="display: none;">
+                    Mobile Provider:
+                    <div>
+                      <label for="mobile_browserstack_username" class="block text-sm font-medium text-gray-700">BrowserStack
+                        Username</label>
+                      <input type="text" name="mobile_browserstack_username" id="mobile_browserstack_username" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter BrowserStack username">
+                    </div>
+          
+                    <div>
+                      <label for="mobile_browserstack_access_key" class="block text-sm font-medium text-gray-700">BrowserStack
+                        Access Key</label>
+                      <input type="text" name="mobile_browserstack_access_key" id="mobile_browserstack_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter BrowserStack access Key">
+                    </div>
+                  </div>
+                  <div id="mobile_saucelabs" class="grid grid-cols-2 gap-6 remote_provider_block remote_mobile_provider_block" style="display: none;">
+                    Mobile Provider:
+                    <div>
+                      <label for="mobile_saucelabs_username" class="block text-sm font-medium text-gray-700">Saucelabs
+                        Username</label>
+                      <input type="text" name="mobile_saucelabs_username" id="mobile_saucelabs_username" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Saucelabs username">
+                    </div>
+          
+                    <div>
+                      <label for="mobile_saucelabs_access_key" class="block text-sm font-medium text-gray-700">Saucelabs
+                        Access
+                        Key</label>
+                      <input type="text" name="mobile_saucelabs_access_key" id="mobile_saucelabs_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Saucelabs Access Key">
+                    </div>
+          
+                    <div>
+                      <label for="mobile_saucelabs_connect_hostname" class="block text-sm font-medium text-gray-700">Saucelabs
+                        connect hostname</label>
+                      <input type="text" name="mobile_saucelabs_connect_hostname" id="mobile_saucelabs_connect_hostname" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter connect hostname">
+                    </div>
+                    <div>
+                      <label for="mobile_saucelabs_connect_port" class="block text-sm font-medium text-gray-700">Saucelabs
+                        connect port</label>
+                      <input type="number" name="mobile_saucelabs_connect_port" id="mobile_saucelabs_connect_port" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter connect port">
+                    </div>
+          
+                    <div>
+                      <label for="mobile_saucelabs_datacenter_endpoint" class="block text-sm font-medium text-gray-700">Saucelabs
+                        datacenter endpoint</label>
+                      <select name="mobile_saucelabs_datacenter_endpoint" id="mobile_saucelabs_datacenter_endpoint" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="">Select an option</option>
+                        <option value="us-west-1">US West 1</option>
+                        <option value="eu-central-1">EU Central 1</option>
+                        <option value="us-east-1">Headless US-East</option>
+          
+                      </select>
+                    </div>
+                  </div>
+          
+                  <div id="mobile_perfecto" class="remote_provider_block remote_mobile_provider_block" style="display: none;">
+                    Mobile Provider:
+                    <div>
+                      <label for="mobile_perfecto_username" class="block text-sm font-medium text-gray-700">Perfecto
+                        Username</label>
+                      <input type="text" name="mobile_perfecto_username" id="mobile_perfecto_username" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Perfecto username">
+                    </div>
+          
+                    <div>
+                      <label for="mobile_perfecto_access_key" class="block text-sm font-medium text-gray-700">Perfecto
+                        Access
+                        Key</label>
+                      <input type="text" name="mobile_perfecto_access_key" id="mobile_perfecto_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Perfecto Access Key">
+                    </div>
+                  </div>
+          
+                  <div id="mobile_lambdatest" class="remote_provider_block remote_mobile_provider_block" style="display: none;">
+                    Mobile Provider:
+                    <div>
+                      <label for="mobile_lambdatest_username" class="block text-sm font-medium text-gray-700">Lambdatest
+                        Username</label>
+                      <input type="text" name="mobile_lambdatest_username" id="mobile_lambdatest_username" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Lambdatest username">
+                    </div>
+          
+                    <div>
+                      <label for="mobile_lambdatest_access_key" class="block text-sm font-medium text-gray-700">Lambdatest
+                        Access
+                        Key</label>
+                      <input type="text" name="mobile_lambdatest_access_key" id="mobile_lambdatest_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Lambdatest Access Key">
+                    </div>
+                  </div>
+                  <div id="mobile_headspin" class="remote_provider_block remote_mobile_provider_block" style="display: none;">
+                    Mobile Provider:
+                    <div>
+                      <label for="mobile_headspin_access_key" class="block text-sm font-medium text-gray-700">HeadSpin
+                        Access
+                        Key</label>
+                      <input type="text" name="mobile_headspin_access_key" id="mobile_headspin_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter HeadSpin Access Key">
+                    </div>
+                  </div>
+                  <div id="mobile_digitalai" class="remote_provider_block remote_mobile_provider_block" style="display: none;">
+                    Mobile Provider:
+                    <div>
+                      <label for="mobile_digitalai_server_url" class="block text-sm font-medium text-gray-700">Digital
+                        AI
+                        Server
+                        URL</label>
+                      <input type="text" name="mobile_digitalai_server_url" id="mobile_digitalai_server_url" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter AI Server URL">
+                    </div>
+                    <div>
+                      <label for="mobile_digitalai_access_key" class="block text-sm font-medium text-gray-700">Digital
+                        AI
+                        Access
+                        Key</label>
+                      <input type="text" name="mobile_digitalai_access_key" id="mobile_digitalai_access_key" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter Digital AI Access Key">
+                    </div>
+                  </div>
+                </div>
+          
+              </div>
+          
+              <!-- Generate Command Button -->
+              <div class="mt-6">
+                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Generate
+                  Command</button>
+              </div>
+            </form>
+          
+            <div class="mt-12">
+              <label class="block text-sm font-medium text-gray-700">Output</label>
+              <div class="mt-1 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-mono text-gray-900">
+                <textarea id="dockerCommand" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Click 'Generate Command' button to get the output"></textarea>
+              </div>
+              <!-- Copy Button -->
+              <button id="copyButton" class="mt-2 px-4 py-2 bg-green-600 text-white rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" style="display: none;" onclick="copyToClipboard()">
+                Copy
+              </button>
+            </div>
+          </div>
+        <p class="is-empty"><br class="ProseMirror-trailingBreak"></p>
+        <p>No more hassle, just fast setups! 🚀 Check out the official <a target="_new" class="text-blue-700" rel="noopener"
+                href="https://support.accelq.com/hc/en-us/articles/360045966932-Using-Dockerized-Agents-for-ACCELQ-test-execution">ACCELQ
+                Docker guide</a> for more info.</p>
+    </div>
+
+    
+
+    <script>
+        //defaults
+        agent_name.value = 'agent_' + generateRandomString(5);
+        window.dockerArgs = {
+          agent_name: {
+            value: null,
+            isMandatory: true
+          },
+          num_concurrent_jobs: {
+            value: 1,
+            isMandatory: true
+          },
+          num_parallel_tc_per_job: {
+            value: 1,
+            isMandatory: true
+          },
+          accelq_server_url: {
+            value: null,
+            isMandatory: true
+          },
+          user_id: {
+            value: null,
+            isMandatory: true
+          },
+          api_key: {
+            value: null,
+            isMandatory: true
+          },
+          tenant_code: {
+            value: null,
+            isMandatory: true
+          },
+          sharing_type: {
+            value: 0,
+            isMandatory: true
+          },
+          agent_type: {
+            value: 'user',
+            isMandatory: true
+          },
+          //all provider type
+          web_provider_type: {
+            value: 'LOCALHOST',
+            isMandatory: false
+          },
+          web_provider_username: {
+            value: null,
+            isMandatory: false
+          },
+          web_provider_password: {
+            value: null,
+            isMandatory: false
+          },
+          web_provider_hostname: {
+            value: null,
+            isMandatory: false
+          },
+          web_provider_port: {
+            value: null,
+            isMandatory: false
+          },
+          web_provider_data_center_endpoint: {
+            value: null,
+            isMandatory: false
+          },
+          mobile_provider_type: {
+            value: 'LOCALHOST',
+            isMandatory: false
+          },
+          mobile_provider_username: {
+            value: null,
+            isMandatory: false
+          },
+          mobile_provider_password: {
+            value: null,
+            isMandatory: false
+          },
+          mobile_provider_hostname: {
+            value: null,
+            isMandatory: false
+          },
+          mobile_provider_port: {
+            value: null,
+            isMandatory: false
+          },
+          mobile_provider_data_center_endpoint: {
+            value: null,
+            isMandatory: false
+          }
+        }
+      
+        function generateRandomString(length) {
+          const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+          let result = '';
+          const charactersLength = characters.length;
+          for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+          }
+          return result;
+        }
+      
+        function disableAllWebRemoteProviderBlocks() {
+          Array.from(document.querySelectorAll('.remote_web_provider_block')).forEach(block => {
+            block.style.display = 'none';
+            removeRequiredFromAllChildFormFields(block)
+            clearAllFieldsUnderRoot(block)
+          })
+        }
+      
+        function disableAllMobileRemoteProviderBlocks() {
+          Array.from(document.querySelectorAll('.remote_mobile_provider_block')).forEach(block => {
+            block.style.display = 'none';
+            removeRequiredFromAllChildFormFields(block)
+            clearAllFieldsUnderRoot(block)
+          })
+        }
+      
+        function markAllChildFormFieldsRequired(root) {
+          Array.from(root.querySelectorAll('input,select')).forEach(elem => {
+            elem.setAttribute('required', true);
+          })
+        }
+      
+        function removeRequiredFromAllChildFormFields(root) {
+          Array.from(root.querySelectorAll('input,select')).forEach(elem => {
+            elem.removeAttribute('required');
+          })
+        }
+      
+        function clearAllFieldsUnderRoot(root) {
+          if (root.tagName === 'SELECT') {
+            elem.selectedIndex = 0;
+            elem.value = "";
+            return;
+          }
+          if (root.tagName === 'INPUT') {
+            elem.value = "";
+            return;
+          }
+          Array.from(root.querySelectorAll('select')).forEach(elem => {
+            elem.selectedIndex = 0;
+          })
+          Array.from(root.querySelectorAll('input')).forEach(elem => {
+            elem.value = '';
+          })
+        }
+      
+        function toggleProviderSection(e, type) {
+          console.log(e)
+          if (type == 'web') {
+            clearAllFieldsUnderRoot(web_provider_name_section)
+            disableAllWebRemoteProviderBlocks()
+            if (e.target.checked) {
+              web_provider_name_section.style.display = 'block';
+              markAllChildFormFieldsRequired(web_provider_name_section)
+            } else {
+              web_provider_name_section.style.display = 'none';
+              removeRequiredFromAllChildFormFields(web_provider_name_section)
+              disableAllWebRemoteProviderBlocks()
+            }
+          } else {
+            clearAllFieldsUnderRoot(mobile_provider_name_section)
+            disableAllMobileRemoteProviderBlocks()
+            if (e.target.checked) {
+              mobile_provider_name_section.style.display = 'block';
+              markAllChildFormFieldsRequired(mobile_provider_name_section)
+            } else {
+              mobile_provider_name_section.style.display = 'none';
+              removeRequiredFromAllChildFormFields(mobile_provider_name_section)
+              disableAllMobileRemoteProviderBlocks()
+            }
+          }
+        }
+      
+        function toggleProviderVendorSection(e, type) {
+          Array.from(document.querySelectorAll('.remote_' + type + '_provider_block')).forEach(block => {
+            block.style.display = 'none';
+            removeRequiredFromAllChildFormFields(block)
+            clearAllFieldsUnderRoot(block)
+          })
+          console.log(e)
+          const selectedVendor = e.target.value;
+          if (selectedVendor === 'BROWSER_STACK') {
+            if (type == 'web') {
+              web_browserstack.style.display = 'block';
+              markAllChildFormFieldsRequired(web_browserstack)
+            } else {
+              mobile_browserstack.style.display = 'block';
+              markAllChildFormFieldsRequired(mobile_browserstack)
+            }
+          } else if (selectedVendor === 'SAUCE_LABS') {
+            if (type == 'web') {
+              web_saucelabs.style.display = 'block';
+              markAllChildFormFieldsRequired(web_saucelabs);
+            } else {
+              mobile_saucelabs.style.display = 'block';
+              markAllChildFormFieldsRequired(mobile_saucelabs);
+            }
+          } else if (selectedVendor === 'PERFECTO') {
+            if (type == 'web') {
+              web_perfecto.style.display = 'block';
+              markAllChildFormFieldsRequired(web_perfecto);
+            } else {
+              mobile_perfecto.style.display = 'block';
+              markAllChildFormFieldsRequired(mobile_perfecto);
+            }
+          } else if (selectedVendor === 'LAMBDATEST') {
+            if (type == 'web') {
+              web_lambdatest.style.display = 'block';
+              markAllChildFormFieldsRequired(web_lambdatest)
+            } else {
+              mobile_lambdatest.style.display = 'block';
+              markAllChildFormFieldsRequired(mobile_lambdatest)
+            }
+          } else if (selectedVendor === 'HEADSPIN') {
+            if (type == 'web') {
+              web_headspin.style.display = 'block';
+              markAllChildFormFieldsRequired(web_headspin)
+            } else {
+              mobile_headspin.style.display = 'block';
+              markAllChildFormFieldsRequired(mobile_headspin)
+            }
+          } else if (selectedVendor === 'DIGITAL_AI') {
+            if (type == 'web') {
+              web_digitalai.style.display = 'block';
+              markAllChildFormFieldsRequired(web_digitalai)
+            } else {
+              mobile_digitalai.style.display = 'block';
+              markAllChildFormFieldsRequired(mobile_digitalai)
+            }
+          }
+        }
+      
+        function generateCommand(dockerRunArgsUpdated) {
+          let command = `docker run -d`;
+          Object.keys(dockerRunArgsUpdated).filter(key => dockerArgs[key].isMandatory).forEach(key => {
+            if (dockerRunArgsUpdated[key].value !== null && dockerRunArgsUpdated[key].value !== '') {
+              command += ` -e ${key}='${dockerRunArgsUpdated[key]}'`
+            }
+          })
+          let isWebProvider = Object.keys(dockerRunArgsUpdated).includes('provider_target') && dockerRunArgsUpdated['provider_target'] == 'web';
+          let isMobileProvider = Object.keys(dockerRunArgsUpdated).includes('provider_target') && dockerRunArgsUpdated['provider_target'] == 'mobile';
+          delete dockerRunArgsUpdated['provider_target']
+          Object.keys(dockerRunArgsUpdated).filter(key => !dockerArgs[key].isMandatory).forEach(key => {
+            if (dockerRunArgsUpdated[key] && dockerRunArgsUpdated[key] !== '') {
+              if (isWebProvider) {
+                command += ` -e web_${key}='${dockerRunArgsUpdated[key]}'`
+              } else if (isMobileProvider) {
+                command += ` -e mobile_${key}='${dockerRunArgsUpdated[key]}'`
+              } else {
+                command += ` -e ${key}='${dockerRunArgsUpdated[key]}'`
+              }
+            }
+          })
+          command += ' accelq/accelq-acc-agent:latest';
+          // Display the generated command
+          document.getElementById('dockerCommand').value = command;
+          // Display the generated command
+          document.getElementById('dockerCommand').innerText = command;
+          // Show the copy button
+          document.getElementById('copyButton').style.display = 'block';
+        }
+      
+        function copyToClipboard() { 
+          dockerCommand.select();
+          document.execCommand('copy');
+          alert('Output copied to clipboard!');
+        }
+      
+        function processForm(e) {
+          console.log('dockerArgs', dockerArgs)
+          event.preventDefault();
+          const formData = new FormData(event.target);
+          const formEntries = Array.from(formData.entries());
+          // Convert formEntries to a Map
+          const formObject = Object.fromEntries(formEntries);
+          console.log('formObject', formObject)
+          let updatedDockerRunArgs = {};
+          Object.keys(dockerArgs).filter(argName => dockerArgs[argName].isMandatory).forEach(argName => {
+            updatedDockerRunArgs[argName] = formObject[argName]
+          })
+          updatedDockerRunArgs.sharing_type = updatedDockerRunArgs.agent_type === 'User' ? 0 : 1;
+          console.log('updatedDockerRunArgs', updatedDockerRunArgs);
+          let isProviderForWebExists = Object.keys(formObject).includes('use_provider_for_web');
+          let isProviderForMobileExists = Object.keys(formObject).includes('use_provider_for_mobile');
+          if (isProviderForWebExists) {
+            updatedDockerRunArgs.web_provider_type = formObject.web_provider_type;
+            if (updatedDockerRunArgs.web_provider_type === 'BROWSER_STACK') {
+              updatedDockerRunArgs.web_provider_username = formObject['web_browserstack_username'];
+              updatedDockerRunArgs.web_provider_password = formObject['web_browserstack_access_key'];
+            } else if (updatedDockerRunArgs.web_provider_type === 'SAUCE_LABS') {
+              updatedDockerRunArgs.web_provider_username = formObject['web_saucelabs_username'];
+              updatedDockerRunArgs.web_provider_password = formObject['web_saucelabs_access_key'];
+              updatedDockerRunArgs.web_provider_hostname = formObject['web_saucelabs_connect_hostname'];
+              updatedDockerRunArgs.web_provider_port = formObject['web_saucelabs_connect_port'];
+              updatedDockerRunArgs.web_provider_data_center_endpoint = formObject['web_saucelabs_datacenter_endpoint'];
+            } else if (updatedDockerRunArgs.web_provider_type === 'PERFECTO') {
+              updatedDockerRunArgs.web_provider_username = formObject['web_perfecto_username'];
+              updatedDockerRunArgs.web_provider_password = formObject['web_perfecto_access_key'];
+            } else if (updatedDockerRunArgs.web_provider_type === 'LAMBDATEST') {
+              updatedDockerRunArgs.web_provider_username = formObject['web_lambdatest_username'];
+              updatedDockerRunArgs.web_provider_password = formObject['web_lambdatest_access_key'];
+            } else if (updatedDockerRunArgs.web_provider_type === 'HEADSPIN') {
+              updatedDockerRunArgs.web_provider_password = formObject['web_headspin_access_key'];
+            } else if (updatedDockerRunArgs.web_provider_type === 'DIGITAL_AI') {
+              updatedDockerRunArgs.web_provider_password = formObject['web_digitalai_server_url'];
+              updatedDockerRunArgs.web_provider_password = formObject['web_digitalai_access_key'];
+            }
+          }
+          if (isProviderForMobileExists) {
+            updatedDockerRunArgs.mobile_provider_type = formObject.mobile_provider_type;
+            if (updatedDockerRunArgs.mobile_provider_type === 'BROWSER_STACK') {
+              updatedDockerRunArgs.mobile_provider_username = formObject['mobile_browserstack_username'];
+              updatedDockerRunArgs.mobile_provider_password = formObject['mobile_browserstack_access_key'];
+            } else if (updatedDockerRunArgs.mobile_provider_type === 'SAUCE_LABS') {
+              updatedDockerRunArgs.mobile_provider_username = formObject['mobile_saucelabs_username'];
+              updatedDockerRunArgs.mobile_provider_password = formObject['mobile_saucelabs_access_key'];
+              updatedDockerRunArgs.mobile_provider_hostname = formObject['mobile_saucelabs_connect_hostname'];
+              updatedDockerRunArgs.mobile_provider_port = formObject['mobile_saucelabs_connect_port'];
+              updatedDockerRunArgs.mobile_provider_data_center_endpoint = formObject['mobile_saucelabs_datacenter_endpoint'];
+            } else if (updatedDockerRunArgs.mobile_provider_type === 'PERFECTO') {
+              updatedDockerRunArgs.mobile_provider_username = formObject['mobile_perfecto_username'];
+              updatedDockerRunArgs.mobile_provider_password = formObject['mobile_perfecto_access_key'];
+            } else if (updatedDockerRunArgs.mobile_provider_type === 'LAMBDATEST') {
+              updatedDockerRunArgs.mobile_provider_username = formObject['mobile_lambdatest_username'];
+              updatedDockerRunArgs.mobile_provider_password = formObject['mobile_lambdatest_access_key'];
+            } else if (updatedDockerRunArgs.mobile_provider_type === 'HEADSPIN') {
+              updatedDockerRunArgs.mobile_provider_password = formObject['mobile_headspin_access_key'];
+            } else if (updatedDockerRunArgs.mobile_provider_type === 'DIGITAL_AI') {
+              updatedDockerRunArgs.mobile_provider_password = formObject['mobile_digitalai_server_url'];
+              updatedDockerRunArgs.mobile_provider_password = formObject['mobile_digitalai_access_key'];
+            }
+          }
+          // Object.keys()
+          // console.log(updatedDockerRunArgs);
+          generateCommand(updatedDockerRunArgs);
+        }
+      </script>
+</body>
+
+</html>
