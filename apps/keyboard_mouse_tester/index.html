@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Event Logger</title>
+    <style>
+        #log {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            padding: 5px;
+            margin-top: 5px;
+            height: 80vh;
+            overflow-y: scroll;
+        }
+        .event-type { color: blue; }
+        .key { color: green; }
+        .button { color: darkorange; }
+        .timestamp { color: purple; }
+        .ctrl-key { color: red; }
+        .shift-key { color: brown; }
+        .alt-key { color: teal; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<button id="clearEvents">Clear Events</button>
+<h2>Click or press any key to see the event logged below:</h2>
+
+<div id="log"></div>
+
+<script>
+    function logEvent(event) {
+        event.preventDefault();
+        if(event.target==clearEvents){
+            return;
+        }
+        const logElement = document.getElementById('log');
+        console.log(event);
+        
+        const isKeyboardEvent = event.type.includes('key');
+        const isMouseEvent = event.type.includes('mouse') || event.type === 'click' || event.type === 'dblclick' || event.type === 'contextmenu';
+        
+        const mouseButton = event.button !== undefined ? (`${event.button}` === '0' ? 'Left' : `${event.button}` === '1' ? 'Middle' : `${event.button}` === '2' ? 'Right' : 'N/A') : 'N/A';
+        const keyVisibility = isKeyboardEvent ? '' : 'hidden';
+        const buttonVisibility = isMouseEvent ? '' : 'hidden';
+
+        const eventHtml = `
+            <div class="event">
+                <span class="event-type">Event Type: ${event.type}</span>,
+                <span class="key ${keyVisibility}">Key: ${event.key || 'N/A'}</span>,
+                <span class="button ${buttonVisibility}">Button: ${mouseButton}</span>,
+                <span class="timestamp">Timestamp: ${event.timeStamp}</span>,
+                <span class="ctrl-key">Control Pressed: ${event.ctrlKey}</span>,
+                <span class="shift-key">Shift Pressed: ${event.shiftKey}</span>,
+                <span class="alt-key">Alt Pressed: ${event.altKey}</span>
+            </div>
+        `;
+
+        logElement.innerHTML += eventHtml;
+        logElement.scrollTop = logElement.scrollHeight;
+    }
+
+    document.addEventListener('keydown', logEvent);
+    document.addEventListener('keyup', logEvent);
+    document.addEventListener('keypress', logEvent);
+    document.addEventListener('mousedown', logEvent);
+    document.addEventListener('mouseup', logEvent);
+    document.addEventListener('click', logEvent);
+    document.addEventListener('dblclick', logEvent);
+    document.addEventListener('contextmenu', logEvent);
+
+    clearEvents.addEventListener('click',()=>{
+        const logElement = document.getElementById('log');
+        logElement.innerHTML="";
+    })
+
+    function aq__showCursor() {
+        var virtual_cursor = document.querySelector("#virtual_cursor");
+        if (virtual_cursor == null) {
+            var cursor_ = document.createElement('div');
+            cursor_.setAttribute('id', 'virtual_cursor');
+            cursor_.style.position = "fixed";
+            cursor_.style.width = '10px';
+            cursor_.style.height = '10px';
+            cursor_.style.color = 'red';
+            cursor_.style.zIndex = 999999;
+            document.body.appendChild(cursor_);
+            document.querySelector("#virtual_cursor").innerHTML="<span> &#8810; </span>";
+
+            document.addEventListener('mousemove', function(e) {
+                var virtual_cursor = document.querySelector("#virtual_cursor");
+                if (virtual_cursor != null) {
+                    virtual_cursor.style.top=e.clientY+"px";
+                    virtual_cursor.style.left=e.clientX+10+"px";
+                }
+            })
+        }
+    }
+    aq__showCursor();
+</script>
+
+</body>
+</html>
