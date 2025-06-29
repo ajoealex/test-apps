@@ -1,131 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appium Source and Screenshot Alignment</title>
+  <meta charset="UTF-8">
+  <title>Appium UI Visual Debugger</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    #canvasContainer {
+      position: relative;
+      display: inline-block;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #inspectorPanel {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #f3f3f3;
+      padding: 15px;
+      border: 1px solid #ccc;
+      width: 250px;
+    }
+    #controls {
+      margin-bottom: 20px;
+    }
+    #highlightAllBtn {
+      margin-top: 10px;
+    }
+  </style>
 </head>
-
 <body>
-    <div id="controls">
-        <h2>Upload Appium Source and Screenshot</h2>
-        <label for="sourceFile">Upload XML Source:</label>
-        <input type="file" id="sourceFile" accept=".xml, .html"><br><br>
-        <label for="screenshotFile">Upload Screenshot:</label>
-        <input type="file" id="screenshotFile" accept="image/*"><br><br>
-        <button id="debugButton">Debug</button>
-    </div>
 
-    <div id="appium_root"></div>
+<div id="controls">
+  <h2>Upload Appium Source and Screenshot</h2>
+  <label>Upload XML Source:</label>
+  <input type="file" id="sourceFile" accept=".xml"><br><br>
+  <label>Upload Screenshot:</label>
+  <input type="file" id="screenshotFile" accept="image/*"><br><br>
+  <button id="debugButton">Load</button>
+</div>
 
-    <script>
-        window.app_resolution = {};
+<div id="canvasContainer">
+  <canvas id="screenshotCanvas" style="z-index: 0;"></canvas>
+  <canvas id="bboxCanvas" style="z-index: 1;"></canvas>
+  <canvas id="hoverCanvas" style="z-index: 2; pointer-events: auto;"></canvas>
+</div>
 
-        function setElementBoundingBox() {
+<div id="inspectorPanel" style="display: none;">
+  <button id="highlightAllBtn">Highlight All Elements</button>
+  <p><strong>Hovered Element:</strong></p>
+  <p id="hoverInfo">None</p>
+</div>
 
-            function getElementCoords(elem, isIOS) {
-                let coords = {
-                    x: null,
-                    y: null,
-                    width: null,
-                    height: null
-                };
-                if (isIOS) {
-                    coords.x = elem.getAttribute('x');
-                    coords.y = elem.getAttribute('y');
-                    coords.width = elem.getAttribute('width');
-                    coords.height = elem.getAttribute('height');
+<script>
+let allElements = [];
+let appResolution = { width: 390, height: 844 };
 
-                } else {
-                    let bounds = elem.getAttribute('bounds').replaceAll('][', ';').replaceAll('[', '').replaceAll(']', '').split(';');
-                    coords.x = bounds[0].split(',')[0]
-                    coords.y = bounds[0].split(',')[1]
-                    x2 = bounds[1].split(',')[0]
-                    y2 = bounds[1].split(',')[1]
-                    coords.width = x2 - coords.x;
-                    coords.height = y2 - coords.y;
-                }
-                return coords;
-            }
-            document.body.style.padding = 0;
-            document.body.style.margin = 0;
-            let isIOS = true;
-            let appium_ui_root = document.querySelector('appiumaut');
-            if (!appium_ui_root) {
-                appium_ui_root = document.querySelector('hierarchy');
-                isIOS = false;
-            }
-            let immediate_child = appium_ui_root.children[0]
-            window.app_resolution = {
-                width: getElementCoords(immediate_child, isIOS).width,
-                height: getElementCoords(immediate_child, isIOS).height
-            }
-            const [...all_elems] = appium_ui_root.querySelectorAll('*');
-            console.log(all_elems)
-            all_elems.forEach(elem => {
-                let x = getElementCoords(elem, isIOS).x;
-                let y = getElementCoords(elem, isIOS).y;
-                let width = getElementCoords(elem, isIOS).width;
-                let height = getElementCoords(elem, isIOS).height;
-                let visible = (isIOS ? elem.getAttribute('visible') : elem.getAttribute('displayed')).includes('true');
+function parseXMLToElements(xmlText) {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
+  const isIOS = xmlDoc.querySelector('AppiumAUT') !== null;
+  const tagRoot = isIOS ? 'AppiumAUT' : 'hierarchy';
 
-                elem.style.position = 'fixed';
-                elem.style.left = x+'px';
-                elem.style.top = y+'px';
-                elem.style.width = width+'px';
-                elem.style.height = height+'px';
-                elem.style.border = '1px solid black';
-                if (visible) {
-                    elem.style.display = 'block';
-                }
-            }
-            )
-        }
+  const root = xmlDoc.querySelector(tagRoot);
+  const nodes = [...root.querySelectorAll('*')];
 
-        function loadImage(dimensions) {
-            let img = new Image();
-            let canvas = document.createElement('canvas');
-            let ctx = canvas.getContext('2d');
-            document.body.appendChild(canvas);
-            img.src = window.screenshotSrc;
-            img.addEventListener('load', function() {
-                canvas.width = dimensions.width;
-                canvas.height = dimensions.height;
-                ctx.drawImage(img, 0, 0, dimensions.width, dimensions.height);
-            });
-        }
+  return nodes.map(el => {
+    let x = parseFloat(el.getAttribute('x'));
+    let y = parseFloat(el.getAttribute('y'));
+    let width = parseFloat(el.getAttribute('width'));
+    let height = parseFloat(el.getAttribute('height'));
+    let visible = (isIOS ? el.getAttribute('visible') : el.getAttribute('displayed')) === 'true';
+
+    return { x, y, width, height, visible };
+  }).filter(e => e.visible && !isNaN(e.x));
+}
+
+function loadScreenshotToCanvas(imageSrc, dimensions) {
+  const canvas = document.getElementById('screenshotCanvas');
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  img.onload = function () {
+    [canvas, ...['bboxCanvas', 'hoverCanvas'].map(id => document.getElementById(id))].forEach(c => {
+      c.width = dimensions.width;
+      c.height = dimensions.height;
+    });
+    ctx.drawImage(img, 0, 0, dimensions.width, dimensions.height);
+  };
+  img.src = imageSrc;
+}
+
+function drawAllBoundingBoxes(elements) {
+  const ctx = document.getElementById('bboxCanvas').getContext('2d');
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.strokeStyle = 'rgba(255,0,0,0.6)';
+  ctx.lineWidth = 1;
+  elements.forEach(({ x, y, width, height }) => {
+    ctx.strokeRect(x, y, width, height);
+  });
+}
+
+function enableHoverHighlight(elements) {
+  const canvas = document.getElementById('hoverCanvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.onmousemove = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (const el of elements) {
+      if (
+        mouseX >= el.x && mouseX <= el.x + el.width &&
+        mouseY >= el.y && mouseY <= el.y + el.height
+      ) {
+        ctx.strokeStyle = 'rgba(0, 128, 255, 0.8)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(el.x, el.y, el.width, el.height);
+        document.getElementById('hoverInfo').innerText =
+          `x: ${el.x}, y: ${el.y}, w: ${el.width}, h: ${el.height}`;
+      }
+    }
+    document.getElementById('hoverInfo').innerText+=
+          '\n'+`x: ${mouseX}, y: ${mouseY}`;
+  };
+}
+
+document.getElementById('debugButton').onclick = () => {
+  const sourceFile = document.getElementById('sourceFile').files[0];
+  const screenshotFile = document.getElementById('screenshotFile').files[0];
+
+  if (!sourceFile || !screenshotFile) {
+    alert('Upload both XML and Screenshot.');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const xmlText = e.target.result;
+    allElements = parseXMLToElements(xmlText);
+
+    const imgReader = new FileReader();
+    imgReader.onload = function (imgEvent) {
+      const imageSrc = imgEvent.target.result;
+      appResolution = {
+        width: Math.max(...allElements.map(e => e.x + e.width), 390),
+        height: Math.max(...allElements.map(e => e.y + e.height), 844)
+      };
+      loadScreenshotToCanvas(imageSrc, appResolution);
+      enableHoverHighlight(allElements);
+      document.getElementById('inspectorPanel').style.display = 'block';
+    };
+    imgReader.readAsDataURL(screenshotFile);
+  };
+  reader.readAsText(sourceFile);
+  document.getElementById('controls').style.display = 'none';
+};
+
+let isHighlighting = false;
+
+document.getElementById('highlightAllBtn').onclick = () => {
+  const ctx = document.getElementById('bboxCanvas').getContext('2d');
+  isHighlighting = !isHighlighting;
+
+  if (isHighlighting) {
+    drawAllBoundingBoxes(allElements);
+    document.getElementById('highlightAllBtn').innerText = 'Turn Off All Element Highlighting';
+  } else {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    document.getElementById('highlightAllBtn').innerText = 'Highlight All Elements';
+  }
+};
 
 
-        
+</script>
 
-        document.getElementById('debugButton').addEventListener('click', function () {
-            const sourceFile = document.getElementById('sourceFile').files[0];
-            const screenshotFile = document.getElementById('screenshotFile').files[0];
-
-            if (sourceFile && screenshotFile) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const xmlContent = e.target.result;
-                    document.getElementById('appium_root').innerHTML = xmlContent;
-
-        // loadImage(app_resolution)
-                    const imgReader = new FileReader();
-                    imgReader.onload = function (event) {
-                        window.screenshotSrc = event.target.result;
-                        setElementBoundingBox();
-                        loadImage(window.app_resolution);
-                    };
-                    imgReader.readAsDataURL(screenshotFile);
-                };
-                reader.readAsText(sourceFile);
-                controls.parentNode.removeChild(controls)
-
-            } else {
-                alert("Please upload both XML source and screenshot.");
-            }
-        });
-    </script>
 </body>
-
 </html>
