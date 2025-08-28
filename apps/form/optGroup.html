@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Select Dropdown Demo</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin: 0; background: #f6f7f9; color: #111; }
+    .wrap { max-width: 720px; margin: 48px auto; padding: 24px; background: #fff; border-radius: 16px; box-shadow: 0 6px 24px rgba(0,0,0,.08); }
+    h1 { margin: 0 0 8px; font-size: 1.4rem; }
+    p.sub { margin: 0 0 24px; color: #555; }
+    .field { margin: 18px 0; }
+    label { display: block; margin-bottom: 8px; font-weight: 600; }
+    select, button {
+      width: 100%; padding: 10px 12px; font-size: 1rem; border-radius: 10px;
+      border: 1px solid #d0d5dd; background: #fff; outline: none;
+    }
+    select:focus, button:focus { border-color: #7aa2ff; box-shadow: 0 0 0 4px rgba(122,162,255,.2); }
+    button { margin-top: 10px; cursor: pointer; }
+    .result { margin-top: 12px; padding: 10px 12px; background: #f1f4f8; border-radius: 10px; min-height: 42px; }
+    .row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 720px) { .row { grid-template-columns: 1fr 1fr; } }
+    .hint { font-size: .9rem; color: #666; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Select Dropdown Examples</h1>
+    <p class="sub">Includes normal select, optgroup single select, and multi-select patterns.</p>
+
+    <!-- Normal dropdown without optgroup -->
+    <section>
+      <div class="field">
+        <label for="simple">Normal Dropdown</label>
+        <select id="simple" name="simple">
+          <option value="" disabled selected hidden>Select an option</option>
+          <option value="val1">Option 1</option>
+          <option value="val2">Option 2</option>
+          <option value="val3">Option 3</option>
+          <option value="val4">Option 4</option>
+        </select>
+      </div>
+      <button id="readSimple">Read selected</button>
+      <div id="simpleResult" class="result" aria-live="polite"></div>
+    </section>
+
+    <hr style="margin:32px 0; border:0; border-top:1px solid #ddd;" />
+
+    <div class="row">
+      <!-- Single-select with optgroup -->
+      <section>
+        <div class="field">
+          <label for="catalog">Catalog item (optgroup)</label>
+          <select id="catalog" name="catalog" required>
+            <option value="" disabled selected hidden>Select an item</option>
+
+            <optgroup label="Fruits">
+              <option value="apple">Apple</option>
+              <option value="banana">Banana</option>
+              <option value="orange">Orange</option>
+            </optgroup>
+
+            <optgroup label="Dairy">
+              <option value="milk">Milk</option>
+              <option value="cheese">Cheese</option>
+              <option value="yogurt" disabled>Yogurt (out of stock)</option>
+            </optgroup>
+          </select>
+        </div>
+        <button id="readSingle">Read selected</button>
+        <div id="singleResult" class="result" aria-live="polite"></div>
+      </section>
+
+      <!-- Multi-select with optgroup -->
+      <section>
+        <div class="field">
+          <label for="skills">Skills inventory (multi-select)</label>
+          <select id="skills" name="skills" multiple size="8">
+            <optgroup label="Frontend">
+              <option>HTML</option>
+              <option>CSS</option>
+              <option>JavaScript</option>
+            </optgroup>
+            <optgroup label="Backend">
+              <option>Node.js</option>
+              <option>Java</option>
+              <option>Python</option>
+            </optgroup>
+          </select>
+        </div>
+        <button id="readMulti">Read selected</button>
+        <div id="multiResult" class="result" aria-live="polite"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const byId = id => document.getElementById(id);
+
+    byId('readSimple').addEventListener('click', () => {
+      const sel = byId('simple');
+      const value = sel.value || '';
+      const label = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
+      byId('simpleResult').textContent = value ? `Value: ${value} | Label: ${label}` : 'No selection';
+    });
+
+    byId('readSingle').addEventListener('click', () => {
+      const sel = byId('catalog');
+      const value = sel.value || '';
+      const label = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
+      byId('singleResult').textContent = value ? `Value: ${value} | Label: ${label}` : 'No selection';
+    });
+
+    byId('readMulti').addEventListener('click', () => {
+      const sel = byId('skills');
+      const selected = Array.from(sel.selectedOptions).map(o => o.text);
+      byId('multiResult').textContent = selected.length ? `Selected: ${selected.join(', ')}` : 'No selections';
+    });
+  </script>
+</body>
+</html>

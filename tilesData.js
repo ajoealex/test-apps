@@ -9,6 +9,7 @@ const tilesData = [
     { name: "Chromedriver Download Helper", link: "https://ajoealex.github.io/chromedriver-download-helper/" },
     { name: "Fixed Width File Helper", link: "https://ajoealex.github.io/test-apps/apps/fixed-width-file-helper/" },
     { name: "Appium Mobile Source Helper", link: "https://ajoealex.github.io/test-apps/apps/mobile-render/" },
-    { name: "Form Prefilled", link: "https://ajoealex.github.io/test-apps/apps/form/bootsstrapForm_prefilled.html" }
+    { name: "Form Prefilled", link: "https://ajoealex.github.io/test-apps/apps/form/bootsstrapForm_prefilled.html" },
+    { name: "OptGroup", link: "https://ajoealex.github.io/test-apps/apps/form/optGroup.html" }
     
 ];
