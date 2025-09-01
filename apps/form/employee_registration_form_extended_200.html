@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Registration Form — Extended Fields</title>
+  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=blnSn3lojfmleuvw7yRKRDDXvzcmCWCD13AxX8oiouJHPp5nNYf2WYfQ5xl2Tpn-Vo_K4nSn91lUBYQ_pYpSmhSIyTbrDyyieQW4UF6ZQ-tWLTP1OTneHCo_6y5KEcVRf3VEW-ViraYitMrHCR_nAKeITQWXPK018IHipBrv_PpcQC-RtEwVHL8GZcI4oXxa_IwCFqO97rg_AtIQl4oug6COzhOXVfh4cSrn2VkwlKTnQTn5aP3kQ1cVwwfoUnj7" charset="UTF-8"></script><style>
+    :root {
+      --bg: #f7f9fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --subtext: #374151;
+      --accent: #2563eb;
+      --border: #e5e7eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    .container {
+      max-width: 980px;
+      margin: 24px auto 80px;
+      padding: 0 16px;
+    }
+    h1 {
+      text-align: center;
+      margin: 16px 0 24px;
+      font-size: 28px;
+    }
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .section h2 {
+      font-size: 18px;
+      margin: 0 0 12px;
+      color: var(--accent);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px 16px;
+    }
+    @media (min-width: 640px) {
+      .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+      .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--subtext);
+      margin-bottom: 6px;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="time"],
+    input[type="month"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      font-size: 14px;
+      background: #fff;
+    }
+    textarea { min-height: 72px; resize: vertical; }
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .muted { font-size: 12px; color: #6b7280; }
+    .row { margin-bottom: 8px; }
+    .sr { position: absolute; left: -9999px; }
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+    .count-pill {
+      display: inline-block;
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #e0e7ff;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Employee Registration Form <span id="fieldCount" class="count-pill" aria-live="polite"></span></h1>
+
+    <!-- Placeholder for any existing base fields your app already includes.
+         This file focuses on the 200 additional fields requested. -->
+
+    <form id="employeeForm" novalidate>
+      <!-- Income & Compensation: 20 fields -->
+      <section class="section" id="incomeCompSection">
+        <h2>Income and Compensation</h2>
+        <div class="grid cols-2">
+          <!-- 20 static fields for consistent indexing -->
+          <!-- 1-5 -->
+          <div class="row">
+            <label for="income_base_salary">Base Salary (Annual, local currency)</label>
+            <input id="income_base_salary" name="income_base_salary" data-testid="income_base_salary" aria-label="Base Salary Annual" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label for="income_monthly_salary">Monthly Salary</label>
+            <input id="income_monthly_salary" name="income_monthly_salary" data-testid="income_monthly_salary" aria-label="Monthly Salary" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label for="income_bonus_target">Annual Bonus Target Percentage</label>
+            <input id="income_bonus_target" name="income_bonus_target" data-testid="income_bonus_target" aria-label="Annual Bonus Target Percentage" type="number" inputmode="decimal" min="0" max="100" step="0.1" />
+          </div>
+          <div class="row">
+            <label for="income_bonus_actual">Last Year Bonus Amount</label>
+            <input id="income_bonus_actual" name="income_bonus_actual" data-testid="income_bonus_actual" aria-label="Last Year Bonus Amount" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label for="income_signon_bonus">Sign-on Bonus</label>
+            <input id="income_signon_bonus" name="income_signon_bonus" data-testid="income_signon_bonus" aria-label="Sign-on Bonus" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <!-- 6-10 -->
+          <div class="row">
+            <label for="income_retention_bonus">Retention Bonus</label>
+            <input id="income_retention_bonus" name="income_retention_bonus" data-testid="income_retention_bonus" aria-label="Retention Bonus" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label for="income_rsus_annual_value">RSUs Annual Value</label>
+            <input id="income_rsus_annual_value" name="income_rsus_annual_value" data-testid="income_rsus_annual_value" aria-label="RSUs Annual Value" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label for="income_espp_contrib_rate">ESPP Contribution Rate Percentage</label>
+            <input id="income_espp_contrib_rate" name="income_espp_contrib_rate" data-testid="income_espp_contrib_rate" aria-label="ESPP Contribution Rate Percentage" type="number" inputmode="decimal" min="0" max="100" step="0.1" />
+          </div>
+          <div class="row">
+            <label for="income_allowance_housing">Housing Allowance</label>
+            <input id="income_allowance_housing" name="income_allowance_housing" data-testid="income_allowance_housing" aria-label="Housing Allowance" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label for="income_allowance_transport">Transport Allowance</label>
+            <input id="income_allowance_transport" name="income_allowance_transport" data-testid="income_allowance_transport" aria-label="Transport Allowance" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <!-- 11-15 -->
+          <div class="row">
+            <label for="income_allowance_meal">Meal Allowance</label>
+            <input id="income_allowance_meal" name="income_allowance_meal" data-testid="income_allowance_meal" aria-label="Meal Allowance" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label for="income_allowance_mobile">Mobile Allowance</label>
+            <input id="income_allowance_mobile" name="income_allowance_mobile" data-testid="income_allowance_mobile" aria-label="Mobile Allowance" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label for="income_allowance_internet">Internet Allowance</label>
+            <input id="income_allowance_internet" name="income_allowance_internet" data-testid="income_allowance_internet" aria-label="Internet Allowance" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label for="income_overtime_rate">Overtime Hourly Rate</label>
+            <input id="income_overtime_rate" name="income_overtime_rate" data-testid="income_overtime_rate" aria-label="Overtime Hourly Rate" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label for="income_commission_rate">Commission Rate Percentage</label>
+            <input id="income_commission_rate" name="income_commission_rate" data-testid="income_commission_rate" aria-label="Commission Rate Percentage" type="number" inputmode="decimal" min="0" max="100" step="0.1" />
+          </div>
+          <!-- 16-20 -->
+          <div class="row">
+            <label for="income_currency">Salary Currency</label>
+            <input id="income_currency" name="income_currency" data-testid="income_currency" aria-label="Salary Currency" type="text" />
+          </div>
+          <div class="row">
+            <label for="income_pay_frequency">Pay Frequency</label>
+            <select id="income_pay_frequency" name="income_pay_frequency" data-testid="income_pay_frequency" aria-label="Pay Frequency">
+              <option value="">Select</option>
+              <option>Monthly</option>
+              <option>Biweekly</option>
+              <option>Weekly</option>
+              <option>Annual</option>
+            </select>
+          </div>
+          <div class="row">
+            <label for="income_bank_name">Salary Bank Name</label>
+            <input id="income_bank_name" name="income_bank_name" data-testid="income_bank_name" aria-label="Salary Bank Name" type="text" />
+          </div>
+          <div class="row">
+            <label for="income_bank_account_last4">Bank Account Last 4 Digits</label>
+            <input id="income_bank_account_last4" name="income_bank_account_last4" data-testid="income_bank_account_last4" aria-label="Bank Account Last 4 Digits" type="text" pattern="\d{4}" />
+          </div>
+          <div class="row">
+            <label for="income_tax_residency_country">Tax Residency Country</label>
+            <input id="income_tax_residency_country" name="income_tax_residency_country" data-testid="income_tax_residency_country" aria-label="Tax Residency Country" type="text" />
+          </div>
+        </div>
+        <p class="muted">Income fields added: 20</p>
+      </section>
+
+      <!-- Certifications: 120 fields generated as 40 x 3 -->
+      <section class="section" id="certificationsSection">
+        <h2>Certifications</h2>
+        <div id="certGrid" class="grid cols-3"></div>
+        <p class="muted" id="certCount">Certifications fields added: 0</p>
+      </section>
+
+      <!-- Domain Expertise: 60 fields generated as 30 x 2 -->
+      <section class="section" id="domainExpertiseSection">
+        <h2>Domain Expertise</h2>
+        <div id="domainGrid" class="grid cols-3"></div>
+        <p class="muted" id="domainCount">Domain fields added: 0</p>
+      </section>
+
+      <div class="section">
+        <button type="submit" id="submitBtn" data-testid="submitBtn">Submit</button>
+        <p class="footer">This page adds exactly 200 new fields for testing Appium element discovery.</p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Utility to create labeled field rows with robust attributes
+    function createField({ id, label, type = "text", attrs = {} }) {
+      const wrap = document.createElement("div");
+      wrap.className = "row";
+      const lbl = document.createElement("label");
+      lbl.htmlFor = id;
+      lbl.textContent = label;
+      const input = document.createElement(type === "textarea" ? "textarea" : "input");
+      if (type !== "textarea" && type !== "select") input.type = type;
+      input.id = id;
+      input.name = id;
+      input.setAttribute("data-testid", id);
+      input.setAttribute("aria-label", label);
+      for (const [k, v] of Object.entries(attrs)) {
+        input.setAttribute(k, v);
+      }
+      wrap.appendChild(lbl);
+      wrap.appendChild(input);
+      return wrap;
+    }
+
+    // Build Certifications: 40 groups * 3 fields = 120
+    const certGrid = document.getElementById("certGrid");
+    let certFields = 0;
+    for (let i = 1; i <= 40; i++) {
+      const n = String(i).padStart(2, "0");
+      certGrid.appendChild(createField({ id: `cert_${n}_name`, label: `Certification ${n} Name` }));
+      certGrid.appendChild(createField({ id: `cert_${n}_issuer`, label: `Certification ${n} Issuer` }));
+      certGrid.appendChild(createField({ id: `cert_${n}_year`, label: `Certification ${n} Year`, type: "number", attrs: { min: "1950", max: "2100", step: "1", inputmode: "numeric" } }));
+      certFields += 3;
+    }
+    document.getElementById("certCount").textContent = `Certifications fields added: ${certFields}`;
+
+    // Build Domain Expertise: 30 domains * 2 fields = 60
+    const defaultDomains = [
+      "Banking", "Insurance", "E-commerce", "Healthcare", "Logistics",
+      "Retail", "Telecom", "Travel", "Media", "Education",
+      "FinTech", "Payments", "Investment Banking", "Wealth Management", "Accounting",
+      "Human Resources", "Legal", "Energy", "Manufacturing", "Automotive",
+      "Pharma", "Gaming", "Public Sector", "Real Estate", "Agriculture",
+      "Cybersecurity", "Cloud Platforms", "AI and ML", "IoT", "Data Engineering"
+    ];
+    const domainGrid = document.getElementById("domainGrid");
+    let domainFields = 0;
+    defaultDomains.forEach((domain, idx) => {
+      const n = String(idx + 1).padStart(2, "0");
+      domainGrid.appendChild(createField({ id: `domain_${n}_proficiency`, label: `${domain} Proficiency 0-10`, type: "number", attrs: { min: "0", max: "10", step: "1", inputmode: "numeric" } }));
+      domainGrid.appendChild(createField({ id: `domain_${n}_years`, label: `${domain} Years of Experience`, type: "number", attrs: { min: "0", max: "60", step: "0.5", inputmode: "decimal" } }));
+      // spacer for 3-col grid alignment
+      const spacer = document.createElement("div"); spacer.className = "row"; spacer.innerHTML = "<span class='sr'>spacer</span>";
+      domainGrid.appendChild(spacer);
+      domainFields += 2;
+    });
+    document.getElementById("domainCount").textContent = `Domain fields added: ${domainFields}`;
+
+    // Display total added field count
+    const addedFields = 20 + certFields + domainFields; // 200
+    document.getElementById("fieldCount").textContent = `Additional fields: ${addedFields}`;
+
+    // No-op submit handler to avoid navigation in test harnesses
+    document.getElementById("employeeForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      alert("Form submit intercepted for testing.");
+    });
+  </script>
+</body>
+</html>
