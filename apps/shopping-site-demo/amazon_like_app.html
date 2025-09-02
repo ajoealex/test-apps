@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Amazon-Like Shopping App</title>
+  <title>Demo Shop App</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f3f3f3; color: #111; }
@@ -48,8 +48,7 @@
 
 <body>
   <header role="banner" aria-label="Site Header">
-    <a href="#" class="logo" aria-label="Amazon Clone Logo">AZ Clone</a>
-    <div class="search-bar"><input type="text" placeholder="Search" aria-label="Search Products" /></div>
+    <a href="#" class="logo" aria-label="Amazon Clone Logo">Demo Shop</a>
     <div class="header-actions" role="group" aria-label="Header Actions">
       <div id="cartWidget" class="cart" role="button" tabindex="0" aria-label="Cart icon with item count">
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -61,10 +60,9 @@
       <button class="btn" aria-label="Account Button">Account</button>
     </div>
   </header>
-
   <div id="controls" role="region" aria-label="Controls">
     <label for="rowCountInput">Rows:</label>
-    <input type="number" id="rowCountInput" min="1" max="100" value="30" aria-label="Number of Product Rows" />
+    <input type="number" id="rowCountInput" min="1" max="100" value="20" aria-label="Number of Product Rows" />
     <label for="depthInput">Depth:</label>
     <input type="number" id="depthInput" min="1" max="100" value="2" aria-label="Nested Depth" />
     <button id="applySettings" aria-label="Apply Settings">Set</button>
