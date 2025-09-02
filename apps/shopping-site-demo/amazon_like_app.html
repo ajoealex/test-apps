@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon-Like Shopping App</title>
+    <!--
+      This page emulates a simplified Amazon shopping experience. All styles and
+      scripts are contained within this single file. Product rows are rendered
+      with a deeply nested structure so automation frameworks (e.g., Appium in a
+      mobile WebView) can hook into each layer. Interactive elements include ARIA
+      roles and labels for accessibility and element identification.
+    -->
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=V38LjB868pETMXTa02frybrbYCkEvU0OJXGm_TNlv4_FGJ_LK6KoVEGPOJaZadLe07dQlj2Oh6j4bBvdZfLAyPO5661R6UMNGkNgUDQftQIGv_Wc3QxmsgnFpZ_y17Ct4hQcXNbDb38jJ9wsll4XALShJZwFRZKLkWknRyiGExvxHxDaHqDw_MpHZ2uzgLmLlkkR7qDtbcmMVLwTizBbkodZxxDaXxdBY-8aes7wik--aGMUAf5E5wuPJRtU4x9D" charset="UTF-8"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f3f3f3; color: #111;
+        }
+
+        /* Amazon-style header */
+        header {
+            background-color: #131921; color: #ffffff;
+            padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo {
+            font-size: 24px; font-weight: bold; letter-spacing: 1px; text-decoration: none; color: #ffffff;
+        }
+        .search-bar { flex: 1; margin: 0 20px; }
+        .search-bar input[type="text"] {
+            width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 16px;
+        }
+
+        .header-actions { display: flex; gap: 15px; align-items: center; }
+        .header-actions .btn {
+            background-color: #f0c14b; border: 1px solid #a88734;
+            padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 14px; color: #111;
+        }
+
+        /* Cart icon with badge */
+        .cart {
+            position: relative; display: inline-flex; align-items: center; gap: 8px;
+            background-color: #232f3e; border: 1px solid #1e2833;
+            padding: 6px 10px; border-radius: 6px; cursor: default;
+        }
+        .cart svg { width: 18px; height: 18px; fill: #fff; }
+        .badge {
+            position: absolute; top: -6px; right: -6px;
+            min-width: 20px; height: 20px; padding: 0 6px;
+            background: #e53935; color: #fff; font-weight: 700; font-size: 12px;
+            border-radius: 999px; display: grid; place-items: center;
+        }
+
+        /* Controls for adjusting number of rows and depth */
+        #controls {
+            background-color: #ffffff; padding: 15px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #ddd;
+        }
+        #controls label { font-weight: bold; margin-right: 5px; }
+        #controls input[type="number"] {
+            width: 70px; padding: 6px; border-radius: 3px; border: 1px solid #ccc; font-size: 14px;
+        }
+        #controls button {
+            background-color: #ffa41c; border: 1px solid #ff9900;
+            padding: 8px 15px; border-radius: 3px; font-size: 14px; cursor: pointer; color: #111;
+        }
+
+        /* Product list container */
+        #productsContainer { padding: 20px; }
+
+        /* Product card at final depth */
+        .product-card {
+            display: flex; background-color: #ffffff; border: 1px solid #ddd; border-radius: 5px;
+            margin-bottom: 15px; overflow: hidden; position: relative; padding: 15px;
+        }
+        .product-image { flex-shrink: 0; width: 150px; height: 150px; margin-right: 15px; }
+        .product-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+        .product-details { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+        .product-name { font-size: 18px; font-weight: bold; color: #007185; margin: 0; }
+        .product-description { font-size: 14px; color: #555; margin: 0; }
+        .product-price { font-size: 16px; font-weight: bold; color: #B12704; }
+        .product-rating { color: #f0c14b; font-size: 14px; }
+
+        .product-actions { margin-top: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+        .product-actions button {
+            background-color: #ffd814; border: 1px solid #fcd200; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 14px;
+        }
+
+        /* Styles for nested wrappers */
+        .product-wrapper { padding: 0; margin: 0; }
+    </style>
+</head>
+<body>
+    <header role="banner" aria-label="Site Header">
+        <a href="#" class="logo" aria-label="Amazon Clone Logo">AZ Clone</a>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Search" aria-label="Search Products" />
+        </div>
+
+        <div class="header-actions" role="group" aria-label="Header Actions">
+            <!-- Cart with badge -->
+            <div id="cartWidget" class="cart" role="button" tabindex="0" aria-label="Cart icon with item count">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.44a1.993 1.993 0 0 0 1.75 2.97h10v-2h-9.42a.25.25 0 0 1-.22-.37l.93-1.63h5.99c.75 0 1.41-.41 1.75-1.03L23 6H6.21l-.94-2zm-1 16a2 2 0 1 0 .001-3.999A2 2 0 0 0 6 20zm10 0a2 2 0 1 0 .001-3.999A2 2 0 0 0 16 20z"/>
+                </svg>
+                <span id="cartBadge" class="badge" aria-live="polite" aria-atomic="true">0</span>
+                <span class="btn" aria-hidden="true">Cart</span>
+            </div>
+
+            <button class="btn" aria-label="Account Button">Account</button>
+        </div>
+    </header>
+
+    <div id="controls" role="region" aria-label="Controls">
+        <label for="rowCountInput">Rows:</label>
+        <input type="number" id="rowCountInput" min="1" max="100" value="30" aria-label="Number of Product Rows" />
+        <label for="depthInput">Depth:</label>
+        <input type="number" id="depthInput" min="1" max="100" value="42" aria-label="Nested Depth" />
+        <button id="applySettings" aria-label="Apply Settings">Set</button>
+    </div>
+
+    <div id="productsContainer" role="list" aria-label="Product List">
+        <!-- Product rows will be generated here -->
+    </div>
+
+    <script>
+        /**
+         * Random helpers
+         */
+        function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function createStarRating(rating) {
+            let stars = ''; for (let i = 0; i < rating; i++) stars += '★';
+            for (let i = rating; i < 5; i++) stars += '☆'; return stars;
+        }
+
+        /**
+         * Generate a random product
+         */
+        function generateRandomProduct(index) {
+            const adjectives = ['Innovative','Elegant','Durable','Compact','Premium','Smart','Eco-friendly','Portable','Versatile','Efficient','Modern','Classic','Affordable','Reliable','Ultra-light','Sleek','Powerful','Advanced','Stylish','Secure'];
+            const nouns = ['Speaker','Laptop','Tablet','Headphone','Camera','Backpack','Smartphone','Watch','Printer','Mouse','Keyboard','Monitor','Router','Drone','Charger','Lamp','Bottle','Chair','Microphone','Desk'];
+            const descriptions = [
+                'Experience outstanding performance with state-of-the-art technology.',
+                'Designed for ultimate comfort and convenience in everyday use.',
+                'A perfect blend of style and functionality that suits any lifestyle.',
+                'Enjoy high-quality sound and crystal-clear visuals like never before.',
+                'Built with precision to deliver long-lasting reliability.',
+                'Lightweight and portable, making it easy to carry anywhere.',
+                'Crafted using eco-friendly materials without compromising on performance.',
+                'An essential gadget that enhances your productivity and entertainment.',
+                'Powered by cutting-edge components for seamless multitasking.',
+                'Designed with your comfort in mind, providing optimal ergonomics.'
+            ];
+            const adjective = adjectives[getRandomInt(0, adjectives.length - 1)];
+            const noun = nouns[getRandomInt(0, nouns.length - 1)];
+            const name = `${adjective} ${noun}`;
+            const description = descriptions[getRandomInt(0, descriptions.length - 1)];
+            const price = (getRandomInt(499, 19999) / 100).toFixed(2); // ₹4.99 to ₹199.99
+            const rating = getRandomInt(1, 5);
+            const imageUrl = `https://picsum.photos/seed/${index}-${Date.now()}-${Math.random().toString(36).slice(2,8)}/200/200`;
+            const id = `p-${index}-${Date.now()}-${Math.floor(Math.random()*1e6)}`;
+            return { id, name, description, price, rating, imageUrl };
+        }
+
+        /**
+         * Deep wrappers
+         */
+        function wrapWithNestedDivs(card, depth, baseId) {
+            let current = card;
+            for (let i = 0; i < depth; i++) {
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('product-wrapper');
+                wrapper.id = `${baseId}-level-${i}`;
+                wrapper.setAttribute('role', 'group');
+                wrapper.setAttribute('aria-label', `Wrapper level ${i}`);
+                wrapper.appendChild(current);
+                current = wrapper;
+            }
+            return current;
+        }
+
+        /**
+         * Cart, Save, Compare state and helpers
+         */
+        const cartSet = new Set();
+        const savedSet = new Set();
+        const comparedSet = new Set();
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadge');
+            badge.textContent = String(cartSet.size);
+        }
+
+        function toggleCart(product, btn) {
+            if (cartSet.has(product.id)) {
+                cartSet.delete(product.id);
+                btn.textContent = 'Add to Cart';
+                btn.setAttribute('aria-label', `Add ${product.name} to cart`);
+                btn.setAttribute('aria-pressed', 'false');
+            } else {
+                cartSet.add(product.id);
+                btn.textContent = 'Remove from Cart';
+                btn.setAttribute('aria-label', `Remove ${product.name} from cart`);
+                btn.setAttribute('aria-pressed', 'true');
+            }
+            updateCartBadge();
+        }
+
+        function toggleGeneric(stateSet, product, btn, addText, removeText, addAria, removeAria) {
+            const active = stateSet.has(product.id);
+            if (active) {
+                stateSet.delete(product.id);
+                btn.textContent = addText;
+                btn.setAttribute('aria-label', addAria.replace('{name}', product.name));
+                btn.setAttribute('aria-pressed', 'false');
+            } else {
+                stateSet.add(product.id);
+                btn.textContent = removeText;
+                btn.setAttribute('aria-label', removeAria.replace('{name}', product.name));
+                btn.setAttribute('aria-pressed', 'true');
+            }
+        }
+
+        /**
+         * Build product row with actions
+         */
+        function buildProductRow(product, depth, index) {
+            const card = document.createElement('div');
+            card.classList.add('product-card');
+            card.setAttribute('role', 'listitem');
+            card.setAttribute('aria-label', `Product ${index + 1}`);
+            card.dataset.productId = product.id;
+
+            // Image
+            const imageContainer = document.createElement('div');
+            imageContainer.classList.add('product-image');
+            imageContainer.setAttribute('aria-label', `${product.name} image`);
+            imageContainer.setAttribute('role', 'img');
+            const img = document.createElement('img');
+            img.src = product.imageUrl;
+            img.alt = `${product.name}`;
+            img.setAttribute('aria-label', `${product.name} product image`);
+            imageContainer.appendChild(img);
+
+            // Details
+            const details = document.createElement('div');
+            details.classList.add('product-details');
+            details.setAttribute('role', 'group');
+            details.setAttribute('aria-label', `${product.name} details`);
+
+            const nameEl = document.createElement('h3');
+            nameEl.classList.add('product-name');
+            nameEl.textContent = product.name;
+            nameEl.setAttribute('aria-label', `Name: ${product.name}`);
+
+            const descEl = document.createElement('p');
+            descEl.classList.add('product-description');
+            descEl.textContent = product.description;
+            descEl.setAttribute('aria-label', `Description: ${product.description}`);
+
+            const priceEl = document.createElement('div');
+            priceEl.classList.add('product-price');
+            priceEl.textContent = `₹${product.price}`;
+            priceEl.setAttribute('aria-label', `Price: ₹${product.price}`);
+
+            const ratingEl = document.createElement('div');
+            ratingEl.classList.add('product-rating');
+            ratingEl.textContent = createStarRating(product.rating);
+            ratingEl.setAttribute('aria-label', `Rating: ${product.rating} stars`);
+
+            // Actions: Add/Remove cart, Save/Remove saved, Compare/Remove compare
+            const actions = document.createElement('div');
+            actions.classList.add('product-actions');
+            actions.setAttribute('role', 'group');
+            actions.setAttribute('aria-label', `Actions for ${product.name}`);
+
+            const cartBtn = document.createElement('button');
+            cartBtn.textContent = 'Add to Cart';
+            cartBtn.setAttribute('aria-label', `Add ${product.name} to cart`);
+            cartBtn.setAttribute('aria-pressed', 'false');
+            cartBtn.addEventListener('click', () => toggleCart(product, cartBtn));
+
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = 'Save';
+            saveBtn.setAttribute('aria-label', `Save {name} for later`.replace('{name}', product.name));
+            saveBtn.setAttribute('aria-pressed', 'false');
+            saveBtn.addEventListener('click', () => toggleGeneric(
+                savedSet, product, saveBtn,
+                'Save', 'Remove saved',
+                'Save {name} for later', 'Remove saved {name}'
+            ));
+
+            const compareBtn = document.createElement('button');
+            compareBtn.textContent = 'Compare';
+            compareBtn.setAttribute('aria-label', `Compare {name}`.replace('{name}', product.name));
+            compareBtn.setAttribute('aria-pressed', 'false');
+            compareBtn.addEventListener('click', () => toggleGeneric(
+                comparedSet, product, compareBtn,
+                'Compare', 'Remove compare',
+                'Compare {name}', 'Remove compare {name}'
+            ));
+
+            actions.appendChild(cartBtn);
+            actions.appendChild(saveBtn);
+            actions.appendChild(compareBtn);
+
+            details.appendChild(nameEl);
+            details.appendChild(descEl);
+            details.appendChild(priceEl);
+            details.appendChild(ratingEl);
+            details.appendChild(actions);
+
+            card.appendChild(imageContainer);
+            card.appendChild(details);
+
+            // Wrap with nested divs
+            const wrapped = wrapWithNestedDivs(card, depth, `product-${index}`);
+            return wrapped;
+        }
+
+        /**
+         * Render list
+         */
+        function renderProducts(rowCount, depth) {
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '';
+
+            // Reset state on regeneration by design
+            cartSet.clear();
+            savedSet.clear();
+            comparedSet.clear();
+            updateCartBadge();
+
+            for (let i = 0; i < rowCount; i++) {
+                const product = generateRandomProduct(i);
+                const row = buildProductRow(product, depth, i);
+                container.appendChild(row);
+            }
+        }
+
+        // Init and controls
+        document.addEventListener('DOMContentLoaded', function () {
+            const defaultRows = parseInt(document.getElementById('rowCountInput').value, 10);
+            const defaultDepth = parseInt(document.getElementById('depthInput').value, 10);
+            renderProducts(defaultRows, defaultDepth);
+        });
+
+        document.getElementById('applySettings').addEventListener('click', function () {
+            const rows = parseInt(document.getElementById('rowCountInput').value, 10);
+            const depth = parseInt(document.getElementById('depthInput').value, 10);
+            const sanitizedRows = Math.min(Math.max(rows, 1), 100);
+            const sanitizedDepth = Math.min(Math.max(depth, 1), 100);
+            renderProducts(sanitizedRows, sanitizedDepth);
+        });
+    </script>
+</body>
+</html>
