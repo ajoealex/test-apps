@@ -1,52 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Amazon-Like Shopping App</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f3f3f3; color: #111; }
-  /* Header */
-  header { background: #131921; color: #fff; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; }
-  .logo { font-size: 24px; font-weight: 700; letter-spacing: 1px; text-decoration: none; color: #fff; }
-  .search-bar { flex: 1; margin: 0 20px; }
-  .search-bar input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
-  .header-actions { display: flex; gap: 15px; align-items: center; }
-  .header-actions .btn { background: #f0c14b; border: 1px solid #a88734; padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 14px; color: #111; }
-  /* Cart */
-  .cart { position: relative; display: inline-flex; align-items: center; gap: 8px; background: #232f3e; border: 1px solid #1e2833; padding: 6px 10px; border-radius: 6px; }
-  .cart svg { width: 18px; height: 18px; fill: #fff; }
-  .badge { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 6px; background: #e53935; color: #fff; font-weight: 700; font-size: 12px; border-radius: 999px; display: grid; place-items: center; }
-  /* Controls */
-  #controls { background: #fff; padding: 15px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #ddd; }
-  #controls label { font-weight: 700; margin-right: 5px; }
-  #controls input { width: 80px; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 14px; }
-  #controls button { background: #ffa41c; border: 1px solid #ff9900; padding: 8px 15px; border-radius: 3px; font-size: 14px; cursor: pointer; color: #111; }
-  /* Products */
-  #productsContainer { padding: 20px; }
-  .product-card { display: flex; background: #fff; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px; overflow: hidden; padding: 15px; }
-  .product-image { width: 150px; height: 150px; margin-right: 15px; }
-  .product-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
-  .product-details { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-  .product-name { font-size: 18px; font-weight: 700; color: #007185; margin: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .featured-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #e8f0fe; color: #1a73e8; font-size: 12px; font-weight: 700; }
-  .product-description { font-size: 14px; color: #555; margin: 0; }
-  .product-price { font-size: 16px; font-weight: 800; color: #B12704; }
-  .product-rating { font-size: 14px; color: #f0c14b; }
-  .product-actions { margin-top: auto; display: flex; gap: 8px; flex-wrap: wrap; }
-  .product-actions button { background: #ffd814; border: 1px solid #fcd200; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 14px; }
-  .product-wrapper { padding: 0; margin: 0; }
-</style>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Amazon-Like Shopping App</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f3f3f3; color: #111; }
+
+    /* Header */
+    header { background: #131921; color: #fff; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-size: 24px; font-weight: 700; letter-spacing: 1px; text-decoration: none; color: #fff; }
+    .search-bar { flex: 1; margin: 0 20px; }
+    .search-bar input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+    .header-actions { display: flex; gap: 15px; align-items: center; }
+    .header-actions .btn { background: #f0c14b; border: 1px solid #a88734; padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 14px; color: #111; }
+
+    /* Cart */
+    .cart { position: relative; display: inline-flex; align-items: center; gap: 8px; background: #232f3e; border: 1px solid #1e2833; padding: 6px 10px; border-radius: 6px; }
+    .cart svg { width: 18px; height: 18px; fill: #fff; }
+    .badge { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 6px; background: #e53935; color: #fff; font-weight: 700; font-size: 12px; border-radius: 999px; display: grid; place-items: center; }
+
+    /* Controls */
+    #controls { background: #fff; padding: 15px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #ddd; }
+    #controls label { font-weight: 700; margin-right: 5px; }
+    #controls input { width: 80px; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 14px; }
+    #controls button { background: #ffa41c; border: 1px solid #ff9900; padding: 8px 15px; border-radius: 3px; font-size: 14px; cursor: pointer; color: #111; }
+
+    /* Products */
+    #productsContainer { padding: 20px; }
+    .product-card { display: flex; background: #fff; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px; overflow: hidden; padding: 15px; }
+    .product-image { width: 150px; height: 150px; margin-right: 15px; }
+    .product-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+    .product-details { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .product-name { font-size: 18px; font-weight: 700; color: #007185; margin: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .featured-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #e8f0fe; color: #1a73e8; font-size: 12px; font-weight: 700; }
+    .product-description { font-size: 14px; color: #555; margin: 0; }
+    .product-price { font-size: 16px; font-weight: 800; color: #B12704; }
+    .product-rating { font-size: 14px; color: #f0c14b; }
+    .product-actions { margin-top: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+    .product-actions button { background: #ffd814; border: 1px solid #fcd200; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 14px; }
+    .product-wrapper { padding: 0; margin: 0; }
+  </style>
 </head>
+
 <body>
   <header role="banner" aria-label="Site Header">
     <a href="#" class="logo" aria-label="Amazon Clone Logo">AZ Clone</a>
     <div class="search-bar"><input type="text" placeholder="Search" aria-label="Search Products" /></div>
     <div class="header-actions" role="group" aria-label="Header Actions">
       <div id="cartWidget" class="cart" role="button" tabindex="0" aria-label="Cart icon with item count">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.44a1.993 1.993 0 0 0 1.75 2.97h10v-2h-9.42a.25.25 0 0 1-.22-.37l.93-1.63h5.99c.75 0 1.41-.41 1.75-1.03L23 6H6.21l-.94-2zm-1 16a2 2 0 1 0 .001-3.999A2 2 0 0 0 6 20zm10 0a2 2 0 1 0 .001-3.999A2 2 0 0 0 16 20z"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.44a1.993 1.993 0 0 0 1.75 2.97h10v-2h-9.42a.25.25 0 0 1-.22-.37l.93-1.63h5.99c.75 0 1.41-.41 1.75-1.03L23 6H6.21l-.94-2zm-1 16a2 2 0 1 0 .001-3.999A2 2 0 0 0 6 20zm10 0a 2 2 0 1 0 .001-3.999A2 2 0 0 0 16 20z" />
+        </svg>
         <span id="cartBadge" class="badge" aria-live="polite" aria-atomic="true">0</span>
         <span class="btn" aria-hidden="true">Cart</span>
       </div>
@@ -64,241 +72,260 @@
 
   <div id="productsContainer" role="list" aria-label="Product List"></div>
 
-<script>
-/** ========= Utilities ========= */
-function getRandomInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
-function starRating(r){ return "★★★★★".slice(0,r)+"☆☆☆☆☆".slice(0,5-r); }
-function seedImage(seed){ return `https://picsum.photos/seed/${encodeURIComponent(seed)}/200/200`; }
+  <script>
+    /** ========= Utilities ========= */
+    function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function starRating(r) { return "★★★★★".slice(0, r) + "☆☆☆☆☆".slice(0, 5 - r); }
+    function seedImage(seed) { return `https://picsum.photos/seed/${encodeURIComponent(seed)}/200/200`; }
+    function mirrorAriaFromText(el) { el.setAttribute("aria-label", el.textContent || ""); }
+    function setId(el, id) { el.id = id; return el; }
 
-/** ========= Fixed first 5 products (static data, normal behavior) ========= */
-const FIXED_PRODUCTS = [
-  { id: "fixed-1", name: "Echo Smart Speaker 4th Gen",
-    description: "Premium sound with Alexa. Voice control your music and smart home devices.",
-    price: "4,499.00", rating: 4, imageUrl: seedImage("echo-4th-gen"), featured: true },
-  { id: "fixed-2", name: "Kindle Paperwhite 6.8-inch",
-    description: "Glare-free display and adjustable warm light for a better reading experience.",
-    price: "11,999.00", rating: 5, imageUrl: seedImage("kindle-paperwhite"), featured: true },
-  { id: "fixed-3", name: "Fire TV Stick 4K",
-    description: "Stream in 4K with Dolby Vision and immersive Dolby Atmos audio.",
-    price: "3,999.00", rating: 4, imageUrl: seedImage("fire-tv-stick-4k"), featured: true },
-  { id: "fixed-4", name: "Basics Wireless Mouse",
-    description: "Ergonomic design with 2.4 GHz wireless connectivity and long battery life.",
-    price: "699.00", rating: 4, imageUrl: seedImage("basics-wireless-mouse"), featured: true },
-  { id: "fixed-5", name: "Amazon Basics Laptop Sleeve 15.6",
-    description: "Protective neoprene sleeve with form-fitting design and smooth zipper.",
-    price: "849.00", rating: 4, imageUrl: seedImage("basics-laptop-sleeve-156"), featured: true }
-];
+    /** ========= Fixed first 5 products ========= */
+    const FIXED_PRODUCTS = [
+      { id: "fixed-1", name: "Echo Smart Speaker 4th Gen", description: "Premium sound with Alexa. Voice control your music and smart home devices.", price: "4,499.00", rating: 4, imageUrl: seedImage("echo-4th-gen"), featured: true },
+      { id: "fixed-2", name: "Kindle Paperwhite 6.8-inch", description: "Glare-free display and adjustable warm light for a better reading experience.", price: "11,999.00", rating: 5, imageUrl: seedImage("kindle-paperwhite"), featured: true },
+      { id: "fixed-3", name: "Fire TV Stick 4K", description: "Stream in 4K with Dolby Vision and immersive Dolby Atmos audio.", price: "3,999.00", rating: 4, imageUrl: seedImage("fire-tv-stick-4k"), featured: true },
+      { id: "fixed-4", name: "Basics Wireless Mouse", description: "Ergonomic design with 2.4 GHz wireless connectivity and long battery life.", price: "699.00", rating: 4, imageUrl: seedImage("basics-wireless-mouse"), featured: true },
+      { id: "fixed-5", name: "Amazon Basics Laptop Sleeve 15.6", description: "Protective neoprene sleeve with form-fitting design and smooth zipper.", price: "849.00", rating: 4, imageUrl: seedImage("basics-laptop-sleeve-156"), featured: true }
+    ];
 
-/** ========= Dynamic generator for remaining rows ========= */
-const ADJ = ["Innovative","Elegant","Durable","Compact","Premium","Smart","Eco","Portable","Versatile","Efficient","Modern","Classic","Affordable","Reliable","Ultra","Sleek","Powerful","Advanced","Stylish","Secure"];
-const NOUN = ["Speaker","Laptop","Tablet","Headphone","Camera","Backpack","Smartphone","Watch","Printer","Mouse","Keyboard","Monitor","Router","Drone","Charger","Lamp","Bottle","Chair","Microphone","Desk"];
-const DESC = [
-  "Outstanding performance with state-of-the-art tech.",
-  "Designed for comfort and everyday convenience.",
-  "Perfect blend of style and functionality.",
-  "High-quality sound and crystal-clear visuals.",
-  "Built for long-lasting reliability.",
-  "Lightweight and portable; carry anywhere.",
-  "Eco-friendly materials without compromise.",
-  "Boosts productivity and entertainment.",
-  "Seamless multitasking with cutting-edge components.",
-  "Ergonomic design for all-day comfort."
-];
+    /** ========= Dynamic generator ========= */
+    const ADJ = ["Innovative", "Elegant", "Durable", "Compact", "Premium", "Smart", "Eco", "Portable", "Versatile", "Efficient", "Modern", "Classic", "Affordable", "Reliable", "Ultra", "Sleek", "Powerful", "Advanced", "Stylish", "Secure"];
+    const NOUN = ["Speaker", "Laptop", "Tablet", "Headphone", "Camera", "Backpack", "Smartphone", "Watch", "Printer", "Mouse", "Keyboard", "Monitor", "Router", "Drone", "Charger", "Lamp", "Bottle", "Chair", "Microphone", "Desk"];
+    const DESC = [
+      "Outstanding performance with state-of-the-art tech.",
+      "Designed for comfort and everyday convenience.",
+      "Perfect blend of style and functionality.",
+      "High-quality sound and crystal-clear visuals.",
+      "Built for long-lasting reliability.",
+      "Lightweight and portable; carry anywhere.",
+      "Eco-friendly materials without compromise.",
+      "Boosts productivity and entertainment.",
+      "Seamless multitasking with cutting-edge components.",
+      "Ergonomic design for all-day comfort."
+    ];
 
-function generateRandomProduct(i){
-  const name = `${ADJ[getRandomInt(0,ADJ.length-1)]} ${NOUN[getRandomInt(0,NOUN.length-1)]}`;
-  const description = DESC[getRandomInt(0,DESC.length-1)];
-  const price = (getRandomInt(499, 19999) / 100).toFixed(2); // ₹4.99 to ₹199.99
-  const rating = getRandomInt(1,5);
-  const id = `dyn-${i}-${Date.now()}-${Math.floor(Math.random()*1e6)}`;
-  const imageUrl = seedImage(`${id}-${name}`);
-  return { id, name, description, price, rating, imageUrl, featured: false };
-}
+    function generateRandomProduct(i) {
+      const name = `${ADJ[getRandomInt(0, ADJ.length - 1)]} ${NOUN[getRandomInt(0, NOUN.length - 1)]}`;
+      const description = DESC[getRandomInt(0, DESC.length - 1)];
+      const price = (getRandomInt(499, 19999) / 100).toFixed(2);
+      const rating = getRandomInt(1, 5);
+      const id = `dyn-${i}-${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+      const imageUrl = seedImage(`${id}-${name}`);
+      return { id, name, description, price, rating, imageUrl, featured: false };
+    }
 
-/** ========= Deep wrappers ========= */
-function wrapWithNestedDivs(card, depth, baseId){
-  let current = card;
-  for(let i=0;i<depth;i++){
-    const w = document.createElement("div");
-    w.className = "product-wrapper";
-    w.id = `${baseId}-level-${i+1}`;
-    w.setAttribute("role","group");
-    w.setAttribute("aria-label",`Wrapper level ${i+1}`);
-    w.appendChild(current);
-    current = w;
-  }
-  return current;
-}
+    /** ========= Deep wrappers ========= */
+    function wrapWithNestedDivs(card, depth, baseId) {
+      let current = card;
+      for (let i = 0; i < depth; i++) {
+        const w = document.createElement("div");
+        w.className = "product-wrapper";
+        // Keep existing predictable IDs and align to base
+        setId(w, `${baseId}_wrapper_level_${i + 1}`);
+        w.setAttribute("role", "group");
+        w.setAttribute("aria-label", `Wrapper level ${i + 1}`);
+        w.appendChild(current);
+        current = w;
+      }
+      return current;
+    }
 
-/** ========= State: cart, saved, compared ========= */
-const cartSet = new Set();
-const savedSet = new Set();
-const comparedSet = new Set();
+    /** ========= State ========= */
+    const cartSet = new Set();
+    const savedSet = new Set();
+    const comparedSet = new Set();
 
-function updateCartBadge(){
-  document.getElementById("cartBadge").textContent = String(cartSet.size);
-}
+    function updateCartBadge() {
+      const badge = document.getElementById("cartBadge");
+      badge.textContent = String(cartSet.size);
+      mirrorAriaFromText(badge);
+    }
 
-function toggleCart(product, btn){
-  if (cartSet.has(product.id)){
-    cartSet.delete(product.id);
-    btn.textContent = "Add to Cart";
-    btn.setAttribute("aria-label", `Add ${product.name} to cart`);
-    btn.setAttribute("aria-pressed","false");
-  } else {
-    cartSet.add(product.id);
-    btn.textContent = "Remove from Cart";
-    btn.setAttribute("aria-label", `Remove ${product.name} from cart`);
-    btn.setAttribute("aria-pressed","true");
-  }
-  updateCartBadge();
-}
+    function setBtnAriaToItsText(btn) {
+      btn.setAttribute("aria-label", btn.textContent || "");
+    }
 
-function toggleGeneric(stateSet, product, btn, addText, removeText, addAria, removeAria){
-  if (stateSet.has(product.id)){
-    stateSet.delete(product.id);
-    btn.textContent = addText;
-    btn.setAttribute("aria-label", addAria.replace("{name}", product.name));
-    btn.setAttribute("aria-pressed","false");
-  } else {
-    stateSet.add(product.id);
-    btn.textContent = removeText;
-    btn.setAttribute("aria-label", removeAria.replace("{name}", product.name));
-    btn.setAttribute("aria-pressed","true");
-  }
-}
+    function toggleCart(product, btn) {
+      if (cartSet.has(product.id)) {
+        cartSet.delete(product.id);
+        btn.textContent = "Add to Cart";
+      } else {
+        cartSet.add(product.id);
+        btn.textContent = "Remove from Cart";
+      }
+      setBtnAriaToItsText(btn);
+      btn.setAttribute("aria-pressed", cartSet.has(product.id) ? "true" : "false");
+      updateCartBadge();
+    }
 
-/** ========= Build a product row ========= */
-function buildProductRow(product, depth, index){
-  const card = document.createElement("div");
-  card.className = "product-card";
-  card.setAttribute("role","listitem");
-  card.setAttribute("aria-label", `Product ${index+1}`);
-  card.dataset.productId = product.id;
+    function toggleGeneric(stateSet, product, btn, addText, removeText) {
+      if (stateSet.has(product.id)) {
+        stateSet.delete(product.id);
+        btn.textContent = addText;
+        btn.setAttribute("aria-pressed", "false");
+      } else {
+        stateSet.add(product.id);
+        btn.textContent = removeText;
+        btn.setAttribute("aria-pressed", "true");
+      }
+      setBtnAriaToItsText(btn);
+    }
 
-  const imgWrap = document.createElement("div");
-  imgWrap.className = "product-image";
-  imgWrap.setAttribute("role","img");
-//   imgWrap.setAttribute("aria-label", `${product.name} image`);
-  imgWrap.setAttribute("aria-label", `product image`);
-  const img = document.createElement("img");
-  img.src = product.imageUrl;
-  img.alt = product.name;
-  imgWrap.appendChild(img);
+    /** ========= Row builder with full ID instrumentation ========= */
+    function buildProductRow(product, depth, index) {
+      const rowIdx = index + 1; // 1-based as requested
+      const base = `product_row_${rowIdx}`;
 
-  const details = document.createElement("div");
-  details.className = "product-details";
-  details.setAttribute("role","group");
-//   details.setAttribute("aria-label", `${product.name}_details`);
-  details.setAttribute("aria-label", `product_details`);
+      // Row root
+      const card = document.createElement("div");
+      card.className = "product-card";
+      setId(card, base);
+      card.setAttribute("role", "listitem");
+      card.setAttribute("aria-label", `Product ${rowIdx}`);
+      card.dataset.productId = product.id;
 
-  const nameEl = document.createElement("h3");
-  nameEl.className = "product-name";
-  const nameText = document.createElement("span");
-  nameText.setAttribute("aria-label",'product_name');
-  nameText.textContent = product.name;
-  nameEl.appendChild(nameText);
+      // Image cluster
+      const imgWrap = document.createElement("div");
+      imgWrap.className = "product-image";
+      setId(imgWrap, `${base}_image`);
+      imgWrap.setAttribute("role", "img");
+      imgWrap.setAttribute("aria-label", "product image");
+      const img = document.createElement("img");
+      img.src = product.imageUrl;
+      img.alt = product.name;
+      setId(img, `${base}_image_img`);
+      imgWrap.appendChild(img);
 
-  if (product.featured){
-    const badge = document.createElement("span");
-    badge.className = "featured-badge";
-    badge.textContent = "Featured";
-    badge.setAttribute("aria-label","Featured item");
-    nameEl.appendChild(badge);
-  }
+      // Details cluster
+      const details = document.createElement("div");
+      details.className = "product-details";
+      setId(details, `${base}_details`);
+      details.setAttribute("role", "group");
+      details.setAttribute("aria-label", `${product.name}_details`);
 
-  const descEl = document.createElement("p");
-  descEl.className = "product-description";
-  descEl.textContent = product.description;
-  descEl.setAttribute("aria-label", `Description: ${product.description}`);
+      // Product name line
+      const nameEl = document.createElement("h3");
+      nameEl.className = "product-name";
+      setId(nameEl, `${base}_name_line`);
+      const nameText = document.createElement("span");
+      nameText.textContent = product.name;
+      mirrorAriaFromText(nameText);
+      setId(nameText, `${base}_name_text`);
+      nameEl.appendChild(nameText);
 
-  const priceEl = document.createElement("div");
-  priceEl.className = "product-price";
-  priceEl.textContent = `₹${product.price}`;
-  priceEl.setAttribute("aria-label", `Price: ₹${product.price}`);
+      if (product.featured) {
+        const badge = document.createElement("span");
+        badge.className = "featured-badge";
+        badge.textContent = "Featured";
+        mirrorAriaFromText(badge);
+        setId(badge, `${base}_featured_badge`);
+        nameEl.appendChild(badge);
+      }
 
-  const ratingEl = document.createElement("div");
-  ratingEl.className = "product-rating";
-  ratingEl.textContent = starRating(product.rating);
-  ratingEl.setAttribute("aria-label", `Rating: ${product.rating} stars`);
+      // Description
+      const descEl = document.createElement("p");
+      descEl.className = "product-description";
+      descEl.textContent = product.description;
+      mirrorAriaFromText(descEl);
+      setId(descEl, `${base}_description`);
 
-  const actions = document.createElement("div");
-  actions.className = "product-actions";
-  actions.setAttribute("role","group");
-  actions.setAttribute("aria-label", `Actions for ${product.name}`);
+      // Price
+      const priceEl = document.createElement("div");
+      priceEl.className = "product-price";
+      priceEl.textContent = `₹${product.price}`;
+      mirrorAriaFromText(priceEl);
+      setId(priceEl, `${base}_price`);
 
-  const cartBtn = document.createElement("button");
-  cartBtn.textContent = "Add to Cart";
-  cartBtn.setAttribute("aria-label", `Add ${product.name} to cart`);
-  cartBtn.setAttribute("aria-pressed","false");
-  cartBtn.addEventListener("click", ()=>toggleCart(product, cartBtn));
+      // Rating
+      const ratingEl = document.createElement("div");
+      ratingEl.className = "product-rating";
+      ratingEl.textContent = starRating(product.rating);
+      mirrorAriaFromText(ratingEl);
+      setId(ratingEl, `${base}_rating`);
 
-  const saveBtn = document.createElement("button");
-  saveBtn.textContent = "Save";
-  saveBtn.setAttribute("aria-label", `Save {name} for later`.replace("{name}", product.name));
-  saveBtn.setAttribute("aria-pressed","false");
-  saveBtn.addEventListener("click", ()=>toggleGeneric(
-    savedSet, product, saveBtn, "Save", "Remove saved", "Save {name} for later", "Remove saved {name}"
-  ));
+      // Actions
+      const actions = document.createElement("div");
+      actions.className = "product-actions";
+      setId(actions, `${base}_actions`);
+      actions.setAttribute("role", "group");
+      actions.setAttribute("aria-label", `Actions for ${product.name}`);
 
-  const compareBtn = document.createElement("button");
-  compareBtn.textContent = "Compare";
-  compareBtn.setAttribute("aria-label", `Compare {name}`.replace("{name}", product.name));
-  compareBtn.setAttribute("aria-pressed","false");
-  compareBtn.addEventListener("click", ()=>toggleGeneric(
-    comparedSet, product, compareBtn, "Compare", "Remove compare", "Compare {name}", "Remove compare {name}"
-  ));
+      const cartBtn = document.createElement("button");
+      cartBtn.textContent = "Add to Cart";
+      setBtnAriaToItsText(cartBtn);
+      setId(cartBtn, `${base}_btn_cart`);
+      cartBtn.setAttribute("aria-pressed", "false");
+      cartBtn.addEventListener("click", () => toggleCart(product, cartBtn));
 
-  actions.appendChild(cartBtn);
-  actions.appendChild(saveBtn);
-  actions.appendChild(compareBtn);
+      const saveBtn = document.createElement("button");
+      saveBtn.textContent = "Save";
+      setBtnAriaToItsText(saveBtn);
+      setId(saveBtn, `${base}_btn_save`);
+      saveBtn.setAttribute("aria-pressed", "false");
+      saveBtn.addEventListener("click", () => toggleGeneric(
+        savedSet, product, saveBtn, "Save", "Remove saved"
+      ));
 
-  details.appendChild(nameEl);
-  details.appendChild(descEl);
-  details.appendChild(priceEl);
-  details.appendChild(ratingEl);
-  details.appendChild(actions);
+      const compareBtn = document.createElement("button");
+      compareBtn.textContent = "Compare";
+      setBtnAriaToItsText(compareBtn);
+      setId(compareBtn, `${base}_btn_compare`);
+      compareBtn.setAttribute("aria-pressed", "false");
+      compareBtn.addEventListener("click", () => toggleGeneric(
+        comparedSet, product, compareBtn, "Compare", "Remove compare"
+      ));
 
-  card.appendChild(imgWrap);
-  card.appendChild(details);
+      actions.appendChild(cartBtn);
+      actions.appendChild(saveBtn);
+      actions.appendChild(compareBtn);
 
-  return wrapWithNestedDivs(card, depth, `product-${index+1}`);
-}
+      details.appendChild(nameEl);
+      details.appendChild(descEl);
+      details.appendChild(priceEl);
+      details.appendChild(ratingEl);
+      details.appendChild(actions);
 
-/** ========= Render ========= */
-function renderProducts(rowCount, depth){
-  const container = document.getElementById("productsContainer");
-  container.innerHTML = "";
+      card.appendChild(imgWrap);
+      card.appendChild(details);
 
-  // Reset states on regeneration
-  cartSet.clear(); savedSet.clear(); comparedSet.clear(); updateCartBadge();
+      // Inflate with deep wrappers; they already get unique IDs derived from base
+      return wrapWithNestedDivs(card, depth, base);
+    }
 
-  const fixedToShow = Math.min(rowCount, FIXED_PRODUCTS.length);
+    /** ========= Render ========= */
+    function renderProducts(rowCount, depth) {
+      const container = document.getElementById("productsContainer");
+      container.innerHTML = "";
 
-  // 1) Fixed first
-  for (let i = 0; i < fixedToShow; i++){
-    container.appendChild(buildProductRow(FIXED_PRODUCTS[i], depth, i));
-  }
+      cartSet.clear(); savedSet.clear(); comparedSet.clear(); updateCartBadge();
 
-  // 2) Dynamic after fixed
-  for (let i = fixedToShow; i < rowCount; i++){
-    const dynIdx = i - FIXED_PRODUCTS.length;
-    container.appendChild(buildProductRow(generateRandomProduct(dynIdx), depth, i));
-  }
-}
+      const fixedToShow = Math.min(rowCount, FIXED_PRODUCTS.length);
 
-/** ========= Init ========= */
-document.addEventListener("DOMContentLoaded", ()=>{
-  const rows = parseInt(document.getElementById("rowCountInput").value, 10) || 30;
-  const depth = parseInt(document.getElementById("depthInput").value, 10) || 42;
-  renderProducts(rows, depth);
-});
+      for (let i = 0; i < fixedToShow; i++) {
+        container.appendChild(buildProductRow(FIXED_PRODUCTS[i], depth, i));
+      }
 
-document.getElementById("applySettings").addEventListener("click", ()=>{
-  const rows = Math.max(1, Math.min(100, parseInt(document.getElementById("rowCountInput").value, 10) || 30));
-  const depth = Math.max(1, Math.min(100, parseInt(document.getElementById("depthInput").value, 10) || 42));
-  renderProducts(rows, depth);
-});
-</script>
+      for (let i = fixedToShow; i < rowCount; i++) {
+        const dynIdx = i - FIXED_PRODUCTS.length;
+        container.appendChild(buildProductRow(generateRandomProduct(dynIdx), depth, i));
+      }
+    }
+
+    /** ========= Init ========= */
+    document.addEventListener("DOMContentLoaded", () => {
+      mirrorAriaFromText(document.getElementById("cartBadge"));
+      const rows = parseInt(document.getElementById("rowCountInput").value, 10) || 30;
+      const depth = parseInt(document.getElementById("depthInput").value, 10) || 42;
+      renderProducts(rows, depth);
+    });
+
+    document.getElementById("applySettings").addEventListener("click", () => {
+      const rows = Math.max(1, Math.min(100, parseInt(document.getElementById("rowCountInput").value, 10) || 30));
+      const depth = Math.max(1, Math.min(100, parseInt(document.getElementById("depthInput").value, 10) || 42));
+      renderProducts(rows, depth);
+    });
+  </script>
 </body>
+
 </html>
