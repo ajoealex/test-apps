@@ -179,7 +179,8 @@ function buildProductRow(product, depth, index){
   const imgWrap = document.createElement("div");
   imgWrap.className = "product-image";
   imgWrap.setAttribute("role","img");
-  imgWrap.setAttribute("aria-label", `${product.name} image`);
+//   imgWrap.setAttribute("aria-label", `${product.name} image`);
+  imgWrap.setAttribute("aria-label", `product image`);
   const img = document.createElement("img");
   img.src = product.imageUrl;
   img.alt = product.name;
@@ -188,11 +189,13 @@ function buildProductRow(product, depth, index){
   const details = document.createElement("div");
   details.className = "product-details";
   details.setAttribute("role","group");
-  details.setAttribute("aria-label", `${product.name} details`);
+//   details.setAttribute("aria-label", `${product.name}_details`);
+  details.setAttribute("aria-label", `product_details`);
 
   const nameEl = document.createElement("h3");
   nameEl.className = "product-name";
   const nameText = document.createElement("span");
+  nameText.setAttribute("aria-label",'product_name');
   nameText.textContent = product.name;
   nameEl.appendChild(nameText);
 
