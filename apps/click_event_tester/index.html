@@ -7,12 +7,15 @@
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
+            position: relative;
+            height: 100vh;
         }
 
         button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
 
         #log {
@@ -28,6 +31,20 @@
             margin-bottom: 5px;
             font-size: 14px;
         }
+
+        #touchDot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .blink {
+            background-color: yellow !important;
+        }
     </style>
 </head>
 <body>
@@ -38,22 +55,58 @@
     <div id="log" aria-live="polite"></div>
 
     <script>
-        const button = document.getElementById('clickBtn');
         const logDiv = document.getElementById('log');
+        const button = document.getElementById('clickBtn');
+        let dotTimeout = null;
 
-        function logPointerType(e) {
+        function logPointerEvent(e) {
             const type = e.pointerType || 'unknown';
             const timestamp = new Date().toLocaleTimeString();
+
+            // Remove existing dot
+            const existingDot = document.getElementById('touchDot');
+            if (existingDot) existingDot.remove();
+
+            // Create dot
+            const dot = document.createElement('div');
+            dot.id = 'touchDot';
+            dot.style.left = `${e.clientX - 5}px`;
+            dot.style.top = `${e.clientY - 5}px`;
+            document.body.appendChild(dot);
+
+            // Remove after 5s
+            if (dotTimeout) clearTimeout(dotTimeout);
+            dotTimeout = setTimeout(() => {
+                dot.remove();
+                dotTimeout = null;
+            }, 5000);
+
+            // Determine if the button was clicked
+            if (e.target === button) {
+                log(`[${timestamp}] Button clicked using: ${type.toUpperCase()}`);
+                blinkButton();
+            } else {
+                log(`[${timestamp}] Click at (${e.clientX}, ${e.clientY}) from: ${type.toUpperCase()}`);
+            }
+        }
+
+        function log(message) {
             const entry = document.createElement('div');
             entry.className = 'log-entry';
-            entry.textContent = `[${timestamp}] Click received from: ${type.toUpperCase()}`;
+            entry.textContent = message;
             logDiv.appendChild(entry);
-
-            // Auto-scroll to the bottom
             logDiv.scrollTop = logDiv.scrollHeight;
         }
 
-        button.addEventListener('pointerdown', logPointerType);
+        function blinkButton() {
+            button.classList.add('blink');
+            setTimeout(() => {
+                button.classList.remove('blink');
+            }, 200); // short blink
+        }
+
+        // Global listener
+        document.body.addEventListener('pointerdown', logPointerEvent);
     </script>
 
 </body>
