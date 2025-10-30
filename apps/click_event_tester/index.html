@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pointer Type Click Logger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #log {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Pointer Click Logger</h2>
+    <button id="clickBtn">Click Me</button>
+
+    <div id="log" aria-live="polite"></div>
+
+    <script>
+        const button = document.getElementById('clickBtn');
+        const logDiv = document.getElementById('log');
+
+        function logPointerType(e) {
+            const type = e.pointerType || 'unknown';
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${timestamp}] Click received from: ${type.toUpperCase()}`;
+            logDiv.appendChild(entry);
+
+            // Auto-scroll to the bottom
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        button.addEventListener('pointerdown', logPointerType);
+    </script>
+
+</body>
+</html>
