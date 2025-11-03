@@ -1,337 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DPR Accurate Image Snip Tool</title>
-<style>
-  :root {
-    --bg: #f9fafb;
-    --surface: #ffffff;
-    --border: #d0d7de;
-    --accent: #0078d7;
-    --accent-light: #e7f3ff;
-    --text: #222;
-    --muted: #666;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPR Accurate Image Snip Tool</title>
+    <style>
+        :root {
+            --bg: #f9fafb;
+            --surface: #ffffff;
+            --border: #d0d7de;
+            --accent: #0078d7;
+            --accent-light: #e7f3ff;
+            --text: #222;
+            --muted: #666;
+        }
 
-  body {
-    font-family: "Segoe UI", Roboto, Arial, sans-serif;
-    background: var(--bg);
-    margin: 0;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: var(--text);
-  }
+        body {
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text);
+        }
 
-  h2 {
-    font-weight: 600;
-    color: var(--accent);
-    margin-bottom: 25px;
-  }
+        h2 {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 25px;
+        }
 
-  #controls {
-    background: var(--surface);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 25px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 420px;
-    max-width: 90%;
-  }
+        #controls {
+            background: var(--surface);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 420px;
+            max-width: 90%;
+        }
 
-  .row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
-  label {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--muted);
-  }
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--muted);
+        }
 
-  input[type="number"],
-  input[type="file"] {
-    flex: 1;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--surface);
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
+        input[type="number"],
+        input[type="file"] {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
 
-  input[type="number"]:focus,
-  input[type="file"]:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 3px var(--accent-light);
-  }
+        input[type="number"]:focus,
+        input[type="file"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 3px var(--accent-light);
+        }
 
-  button {
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 18px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-  }
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
 
-  button:hover {
-    background: #005fa3;
-  }
+        button:hover {
+            background: #005fa3;
+        }
 
-  button:disabled {
-    background: #c5c5c5;
-    cursor: not-allowed;
-  }
+        button:disabled {
+            background: #c5c5c5;
+            cursor: not-allowed;
+        }
 
-  #container {
-    position: relative;
-    display: none;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    margin-top: 25px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-    border-radius: 8px;
-    overflow: hidden;
-  }
+        #container {
+            position: relative;
+            display: none;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            margin-top: 25px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            overflow: hidden;
+        }
 
-  #imageCanvas, #overlayCanvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-radius: 8px;
-  }
+        #imageCanvas,
+        #overlayCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 8px;
+        }
 
-  #infoBar {
-    margin-top: 20px;
-    font-size: 13px;
-    color: var(--text);
-    background: var(--accent-light);
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    width: fit-content;
-    line-height: 1.5;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  }
+        #infoBar {
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text);
+            background: var(--accent-light);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            width: fit-content;
+            line-height: 1.5;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
 
-  #preview {
-    margin-top: 30px;
-    text-align: center;
-    display: none;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    padding: 20px;
-    width: fit-content;
-  }
+        #preview {
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            padding: 20px;
+            width: fit-content;
+        }
 
-  #preview h3 {
-    margin: 0;
-    color: var(--accent);
-    font-weight: 600;
-  }
+        #preview h3 {
+            margin: 0;
+            color: var(--accent);
+            font-weight: 600;
+        }
 
-  #snippedImage {
-    margin-top: 15px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    max-width: 100%;
-  }
+        #snippedImage {
+            margin-top: 15px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            max-width: 100%;
+        }
 
-  @media (max-width: 480px) {
-    #controls {
-      width: 100%;
-      padding: 15px;
-    }
+        @media (max-width: 480px) {
+            #controls {
+                width: 100%;
+                padding: 15px;
+            }
 
-    .row {
-      flex-direction: column;
-      align-items: stretch;
-    }
+            .row {
+                flex-direction: column;
+                align-items: stretch;
+            }
 
-    button {
-      width: 100%;
-    }
-  }
-</style>
+            button {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <h2>DPR Accurate Image Snip Tool</h2>
+    <h2>DPR Accurate Image Snip Tool</h2>
 
-  <div id="controls">
-    <div class="row">
-      <input type="file" id="imageInput" accept="image/*">
-    </div>
-    <div class="row">
-      <div><label>DPR:</label><input type="number" id="dprInput" step="0.1" placeholder="e.g. 2.3"></div>
+    <div id="controls">
+        <div class="row">
+            <input type="file" id="imageInput" accept="image/*">
+        </div>
+        <div class="row">
+            <!-- <div><label>DPR:</label><input type="number" id="dprInput" step="0.1" placeholder="e.g. 2.3"></div>
       <div><label>Width:</label><input type="number" id="widthInput" placeholder="auto"></div>
-      <div><label>Height:</label><input type="number" id="heightInput" placeholder="auto"></div>
+      <div><label>Height:</label><input type="number" id="heightInput" placeholder="auto"></div> -->
+
+            <table class="input-table">
+                <tr>
+                    <td><label for="dprInput">DPR:</label></td>
+                    <td><input type="number" id="dprInput" step="0.1" placeholder="e.g. 2.3"></td>
+                </tr>
+                <tr>
+                    <td><label for="widthInput">Width:</label></td>
+                    <td><input type="number" id="widthInput" placeholder="auto"></td>
+                </tr>
+                <tr>
+                    <td><label for="heightInput">Height:</label></td>
+                    <td><input type="number" id="heightInput" placeholder="auto"></td>
+                </tr>
+            </table>
+
+        </div>
+        <div class="row">
+            <button id="loadImage">Load Image</button>
+            <button id="saveSnip" disabled>Save Snip</button>
+        </div>
     </div>
-    <div class="row">
-      <button id="loadImage">Load Image</button>
-      <button id="saveSnip" disabled>Save Snip</button>
+
+    <div id="container">
+        <canvas id="imageCanvas"></canvas>
+        <canvas id="overlayCanvas"></canvas>
     </div>
-  </div>
 
-  <div id="container">
-    <canvas id="imageCanvas"></canvas>
-    <canvas id="overlayCanvas"></canvas>
-  </div>
+    <div id="infoBar" style="display:none;"></div>
 
-  <div id="infoBar" style="display:none;"></div>
+    <div id="preview">
+        <h3>Snipped Image:</h3>
+        <img id="snippedImage" alt="Snip Preview">
+    </div>
 
-  <div id="preview">
-    <h3>Snipped Image:</h3>
-    <img id="snippedImage" alt="Snip Preview">
-  </div>
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const loadButton = document.getElementById('loadImage');
+        const saveButton = document.getElementById('saveSnip');
+        const container = document.getElementById('container');
+        const imageCanvas = document.getElementById('imageCanvas');
+        const overlayCanvas = document.getElementById('overlayCanvas');
+        const ctxImage = imageCanvas.getContext('2d');
+        const ctxOverlay = overlayCanvas.getContext('2d');
+        const infoBar = document.getElementById('infoBar');
+        const previewDiv = document.getElementById('preview');
+        const snippedImage = document.getElementById('snippedImage');
+        const dprInput = document.getElementById('dprInput');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
 
-<script>
-  const imageInput = document.getElementById('imageInput');
-  const loadButton = document.getElementById('loadImage');
-  const saveButton = document.getElementById('saveSnip');
-  const container = document.getElementById('container');
-  const imageCanvas = document.getElementById('imageCanvas');
-  const overlayCanvas = document.getElementById('overlayCanvas');
-  const ctxImage = imageCanvas.getContext('2d');
-  const ctxOverlay = overlayCanvas.getContext('2d');
-  const infoBar = document.getElementById('infoBar');
-  const previewDiv = document.getElementById('preview');
-  const snippedImage = document.getElementById('snippedImage');
-  const dprInput = document.getElementById('dprInput');
-  const widthInput = document.getElementById('widthInput');
-  const heightInput = document.getElementById('heightInput');
+        let img = new Image();
+        let imgLoaded = false;
+        let startX, startY, endX, endY, isDrawing = false;
 
-  let img = new Image();
-  let imgLoaded = false;
-  let startX, startY, endX, endY, isDrawing = false;
+        loadButton.addEventListener('click', () => {
+            const file = imageInput.files[0];
+            if (!file) {
+                alert("Please select an image first.");
+                return;
+            }
 
-  loadButton.addEventListener('click', () => {
-    const file = imageInput.files[0];
-    if (!file) {
-      alert("Please select an image first.");
-      return;
-    }
+            const dpr = parseFloat(dprInput.value) || 1;
+            const reader = new FileReader();
+            reader.onload = e => {
+                img.onload = () => {
+                    const nativeWidth = img.width;
+                    const nativeHeight = img.height;
+                    const targetWidth = parseInt(widthInput.value) || nativeWidth;
+                    const targetHeight = parseInt(heightInput.value) || nativeHeight;
 
-    const dpr = parseFloat(dprInput.value) || 1;
-    const reader = new FileReader();
-    reader.onload = e => {
-      img.onload = () => {
-        const nativeWidth = img.width;
-        const nativeHeight = img.height;
-        const targetWidth = parseInt(widthInput.value) || nativeWidth;
-        const targetHeight = parseInt(heightInput.value) || nativeHeight;
+                    imageCanvas.width = targetWidth;
+                    imageCanvas.height = targetHeight;
+                    overlayCanvas.width = targetWidth;
+                    overlayCanvas.height = targetHeight;
 
-        imageCanvas.width = targetWidth;
-        imageCanvas.height = targetHeight;
-        overlayCanvas.width = targetWidth;
-        overlayCanvas.height = targetHeight;
+                    const cssWidth = targetWidth / dpr;
+                    const cssHeight = targetHeight / dpr;
+                    container.style.width = cssWidth + "px";
+                    container.style.height = cssHeight + "px";
+                    imageCanvas.style.width = cssWidth + "px";
+                    imageCanvas.style.height = cssHeight + "px";
+                    overlayCanvas.style.width = cssWidth + "px";
+                    overlayCanvas.style.height = cssHeight + "px";
 
-        const cssWidth = targetWidth / dpr;
-        const cssHeight = targetHeight / dpr;
-        container.style.width = cssWidth + "px";
-        container.style.height = cssHeight + "px";
-        imageCanvas.style.width = cssWidth + "px";
-        imageCanvas.style.height = cssHeight + "px";
-        overlayCanvas.style.width = cssWidth + "px";
-        overlayCanvas.style.height = cssHeight + "px";
+                    ctxImage.clearRect(0, 0, targetWidth, targetHeight);
+                    ctxImage.drawImage(img, 0, 0, targetWidth, targetHeight);
 
-        ctxImage.clearRect(0, 0, targetWidth, targetHeight);
-        ctxImage.drawImage(img, 0, 0, targetWidth, targetHeight);
+                    container.style.display = 'inline-block';
+                    infoBar.style.display = 'block';
+                    previewDiv.style.display = 'none';
+                    saveButton.disabled = true;
+                    imgLoaded = true;
 
-        container.style.display = 'inline-block';
-        infoBar.style.display = 'block';
-        previewDiv.style.display = 'none';
-        saveButton.disabled = true;
-        imgLoaded = true;
-
-        infoBar.innerHTML = `
+                    infoBar.innerHTML = `
           <strong>Image Info:</strong><br>
           Native: ${nativeWidth} × ${nativeHeight}px<br>
           Used: ${targetWidth} × ${targetHeight}px<br>
           Displayed: ${cssWidth.toFixed(1)} × ${cssHeight.toFixed(1)}px<br>
           DPR: ${dpr}
         `;
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
 
-  overlayCanvas.addEventListener('mousedown', e => {
-    if (!imgLoaded) return;
-    const rect = overlayCanvas.getBoundingClientRect();
-    const scaleX = overlayCanvas.width / rect.width;
-    const scaleY = overlayCanvas.height / rect.height;
-    startX = (e.clientX - rect.left) * scaleX;
-    startY = (e.clientY - rect.top) * scaleY;
-    isDrawing = true;
-  });
+        overlayCanvas.addEventListener('mousedown', e => {
+            if (!imgLoaded) return;
+            const rect = overlayCanvas.getBoundingClientRect();
+            const scaleX = overlayCanvas.width / rect.width;
+            const scaleY = overlayCanvas.height / rect.height;
+            startX = (e.clientX - rect.left) * scaleX;
+            startY = (e.clientY - rect.top) * scaleY;
+            isDrawing = true;
+        });
 
-  overlayCanvas.addEventListener('mousemove', e => {
-    if (!isDrawing) return;
-    const rect = overlayCanvas.getBoundingClientRect();
-    const scaleX = overlayCanvas.width / rect.width;
-    const scaleY = overlayCanvas.height / rect.height;
-    endX = (e.clientX - rect.left) * scaleX;
-    endY = (e.clientY - rect.top) * scaleY;
-    ctxOverlay.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-    ctxOverlay.strokeStyle = '#ff3333';
-    ctxOverlay.lineWidth = 3;
-    ctxOverlay.setLineDash([6]);
-    ctxOverlay.strokeRect(startX, startY, endX - startX, endY - startY);
-  });
+        overlayCanvas.addEventListener('mousemove', e => {
+            if (!isDrawing) return;
+            const rect = overlayCanvas.getBoundingClientRect();
+            const scaleX = overlayCanvas.width / rect.width;
+            const scaleY = overlayCanvas.height / rect.height;
+            endX = (e.clientX - rect.left) * scaleX;
+            endY = (e.clientY - rect.top) * scaleY;
+            ctxOverlay.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+            ctxOverlay.strokeStyle = '#ff3333';
+            ctxOverlay.lineWidth = 3;
+            ctxOverlay.setLineDash([6]);
+            ctxOverlay.strokeRect(startX, startY, endX - startX, endY - startY);
+        });
 
-  overlayCanvas.addEventListener('mouseup', () => {
-    if (!isDrawing) return;
-    isDrawing = false;
-    saveButton.disabled = false;
-  });
+        overlayCanvas.addEventListener('mouseup', () => {
+            if (!isDrawing) return;
+            isDrawing = false;
+            saveButton.disabled = false;
+        });
 
-  saveButton.addEventListener('click', () => {
-    if (!imgLoaded || startX === undefined || endX === undefined) {
-      alert("No selection made.");
-      return;
-    }
+        saveButton.addEventListener('click', () => {
+            if (!imgLoaded || startX === undefined || endX === undefined) {
+                alert("No selection made.");
+                return;
+            }
 
-    const x = Math.min(startX, endX);
-    const y = Math.min(startY, endY);
-    const width = Math.abs(endX - startX);
-    const height = Math.abs(endY - startY);
+            const x = Math.min(startX, endX);
+            const y = Math.min(startY, endY);
+            const width = Math.abs(endX - startX);
+            const height = Math.abs(endY - startY);
 
-    if (width === 0 || height === 0) {
-      alert("Invalid selection area.");
-      return;
-    }
+            if (width === 0 || height === 0) {
+                alert("Invalid selection area.");
+                return;
+            }
 
-    const snipCanvas = document.createElement('canvas');
-    snipCanvas.width = width;
-    snipCanvas.height = height;
-    const snipCtx = snipCanvas.getContext('2d');
-    snipCtx.drawImage(imageCanvas, x, y, width, height, 0, 0, width, height);
-    snippedImage.src = snipCanvas.toDataURL('image/png');
+            const snipCanvas = document.createElement('canvas');
+            snipCanvas.width = width;
+            snipCanvas.height = height;
+            const snipCtx = snipCanvas.getContext('2d');
+            snipCtx.drawImage(imageCanvas, x, y, width, height, 0, 0, width, height);
+            snippedImage.src = snipCanvas.toDataURL('image/png');
 
-    previewDiv.style.display = 'block';
+            previewDiv.style.display = 'block';
 
-    const link = document.createElement('a');
-    link.download = 'snip.png';
-    link.href = snipCanvas.toDataURL('image/png');
-    link.click();
-  });
-</script>
+            const link = document.createElement('a');
+            link.download = 'snip.png';
+            link.href = snipCanvas.toDataURL('image/png');
+            link.click();
+        });
+    </script>
 </body>
 </html>
