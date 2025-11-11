@@ -14,6 +14,6 @@ const tilesData = [
     { name: "OptGroup", link: "https://ajoealex.github.io/test-apps/apps/form/optGroup.html" },
     { name: "long form", link: "https://ajoealex.github.io/test-apps/apps/form/employee_registration_form_extended_200.html" },
     { name: "demo shopping site", link: "https://ajoealex.github.io/test-apps/apps/shopping-site-demo/amazon_like_app.html" },
-    { name: "image processing helper", link: "https://ajoealex.github.io/test-apps/apps/image-processing-helper/index.html" }    
-
+    { name: "image processing helper", link: "https://ajoealex.github.io/test-apps/apps/image-processing-helper/index.html" },
+    { name: "AES Encryption Helper", link: "https://ajoealex.github.io/test-apps/apps/AES-Encryption/index.html" }
 ];
