@@ -11,5 +11,6 @@ const tilesData = [
     { name: "Fixed Width File Helper", link: "https://ajoealex.github.io/test-apps/apps/fixed-width-file-helper/" },
     { name: "Appium Mobile Source Helper", link: "https://ajoealex.github.io/test-apps/apps/mobile-render/" },
     { name: "image processing helper", link: "https://ajoealex.github.io/test-apps/apps/image-processing-helper/index.html" },
-    { name: "AES Encryption Helper", link: "https://ajoealex.github.io/test-apps/apps/AES-Encryption/index.html" }
+    { name: "AES Encryption Helper", link: "https://ajoealex.github.io/test-apps/apps/AES-Encryption/index.html" },
+    { name: "ICON Generator", link: "https://ajoealex.github.io/test-apps/apps/icon-generator/index.html" }
 ];
