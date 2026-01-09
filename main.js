@@ -9,7 +9,8 @@ window.addEventListener('DOMContentLoaded', () => {
         tileElement.innerText = tile.name;
         
         tileElement.addEventListener('click', () => {
-            window.location.href = tile.link;
+            // window.location.href = tile.link;
+            window.open(tile.link, '_blank', 'noopener,noreferrer');
         });
         
         tilesContainer.appendChild(tileElement);
