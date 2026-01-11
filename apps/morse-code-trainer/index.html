@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morse Code Trainer</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    color: white;
+    margin: 0 0 20px 0;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .controls {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+  }
+
+  .section {
+    margin-bottom: 20px;
+  }
+
+  .section:last-child {
+    margin-bottom: 0;
+  }
+
+  .section-title {
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 12px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    color: #2d3748;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #667eea;
+  }
+
+  input[type="number"] {
+    width: 100px;
+    padding: 10px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.2s;
+  }
+
+  input[type="number"]:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .input-label {
+    font-size: 13px;
+    color: #718096;
+    font-weight: 500;
+  }
+
+  button {
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  #toggleBtn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 100%;
+  }
+
+  #toggleBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  #toggleBtn:active {
+    transform: translateY(0);
+  }
+
+  #toggleBtn.active {
+    background: linear-gradient(135deg, #fc5c7d 0%, #6a82fb 100%);
+  }
+
+  .display {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: min(30vw, 300px);
+    font-weight: bold;
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    color: #48bb78;
+    user-select: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    text-shadow: 0 0 20px rgba(72, 187, 120, 0.5);
+    transition: color 0.3s ease;
+  }
+
+  .display.playing {
+    color: #68d391;
+    animation: pulse 0.5s ease-in-out;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 1.8em;
+    }
+
+    .controls {
+      padding: 16px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 14px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Morse Code Trainer</h1>
+
+  <div class="controls">
+
+    <div class="section">
+      <div class="section-title">Character Set</div>
+      <div class="row">
+        <label><input type="checkbox" id="letters" checked> Letters A–Z</label>
+        <label><input type="checkbox" id="numbers"> Numbers 0–9</label>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Timing Settings</div>
+      <div class="row">
+        <div class="input-group">
+          <span class="input-label">Dot Unit (ms)</span>
+          <input type="number" id="dotUnit" value="120" min="40" step="10">
+        </div>
+
+        <div class="input-group">
+          <span class="input-label">Delay Between Chars (ms)</span>
+          <input type="number" id="charDelay" value="600" min="100" step="50">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Audio</div>
+      <div class="row">
+        <label><input type="checkbox" id="enableSound"> Enable sound</label>
+      </div>
+    </div>
+
+    <div class="section">
+      <button id="toggleBtn">Start</button>
+    </div>
+
+  </div>
+
+  <div class="display" id="display">–</div>
+
+</div>
+
+<script>
+const MORSE = {
+  A: ".-",    B: "-...",  C: "-.-.",  D: "-..",   E: ".",
+  F: "..-.",  G: "--.",   H: "....",  I: "..",    J: ".---",
+  K: "-.-",   L: ".-..",  M: "--",    N: "-.",    O: "---",
+  P: ".--.",  Q: "--.-",  R: ".-.",   S: "...",   T: "-",
+  U: "..-",   V: "...-",  W: ".--",   X: "-..-",
+  Y: "-.--",  Z: "--..",
+
+  "0": "-----", "1": ".----", "2": "..---", "3": "...--",
+  "4": "....-", "5": ".....", "6": "-....",
+  "7": "--...", "8": "---..", "9": "----."
+};
+
+let running = false;
+let timeoutChain = [];
+let audioContext = null;
+
+function clearTimers() {
+  timeoutChain.forEach(t => clearTimeout(t));
+  timeoutChain = [];
+}
+
+function initAudioContext() {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioContext;
+}
+
+function playBeep(duration, frequency = 600) {
+  const ctx = initAudioContext();
+  const oscillator = ctx.createOscillator();
+  const gainNode = ctx.createGain();
+
+  oscillator.connect(gainNode);
+  gainNode.connect(ctx.destination);
+
+  oscillator.frequency.value = frequency;
+  oscillator.type = 'sine';
+
+  gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration / 1000);
+
+  oscillator.start(ctx.currentTime);
+  oscillator.stop(ctx.currentTime + duration / 1000);
+}
+
+function vibrateMorse(morse, dot) {
+  const pattern = [];
+  for (let i = 0; i < morse.length; i++) {
+    pattern.push(morse[i] === "." ? dot : dot * 3);
+    if (i < morse.length - 1) pattern.push(dot);
+  }
+  if (navigator.vibrate) {
+    navigator.vibrate(pattern);
+  }
+  return pattern.reduce((a, b) => a + b, 0);
+}
+
+function playMorseSound(morse, dot) {
+  if (!document.getElementById("enableSound").checked) return;
+
+  const ctx = initAudioContext();
+  let time = ctx.currentTime;
+
+  for (let i = 0; i < morse.length; i++) {
+    const duration = (morse[i] === "." ? dot : dot * 3) / 1000;
+
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.frequency.value = 600;
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0, time);
+    gainNode.gain.linearRampToValueAtTime(0.3, time + 0.005);
+    gainNode.gain.setValueAtTime(0.3, time + duration - 0.005);
+    gainNode.gain.linearRampToValueAtTime(0, time + duration);
+
+    oscillator.start(time);
+    oscillator.stop(time + duration);
+
+    time += duration + (dot / 1000);
+  }
+}
+
+function stopTraining() {
+  running = false;
+  clearTimers();
+  if (navigator.vibrate) {
+    navigator.vibrate(0);
+  }
+  document.getElementById("display").textContent = "–";
+  document.getElementById("display").classList.remove("playing");
+  document.getElementById("toggleBtn").textContent = "Start";
+  document.getElementById("toggleBtn").classList.remove("active");
+}
+
+function startTraining() {
+  if (navigator.vibrate && !navigator.vibrate) {
+    // Skip vibration check, continue anyway for sound-only mode
+  }
+
+  const useLetters = document.getElementById("letters").checked;
+  const useNumbers = document.getElementById("numbers").checked;
+
+  if (!useLetters && !useNumbers) {
+    alert("Please select at least one character set.");
+    return;
+  }
+
+  const dot = Number(document.getElementById("dotUnit").value);
+  const charDelay = Number(document.getElementById("charDelay").value);
+  const display = document.getElementById("display");
+
+  let sequence = [];
+  if (useLetters) sequence.push(...'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  if (useNumbers) sequence.push(...'0123456789');
+
+  running = true;
+  clearTimers();
+
+  document.getElementById("toggleBtn").textContent = "Stop";
+  document.getElementById("toggleBtn").classList.add("active");
+
+  let elapsed = 0;
+
+  sequence.forEach(char => {
+    const morse = MORSE[char];
+    if (!morse) return;
+
+    const t = setTimeout(() => {
+      if (!running) return;
+      display.textContent = char;
+      display.classList.add("playing");
+      vibrateMorse(morse, dot);
+      playMorseSound(morse, dot);
+
+      setTimeout(() => {
+        display.classList.remove("playing");
+      }, 100);
+    }, elapsed);
+
+    timeoutChain.push(t);
+
+    elapsed += vibrateMorse(morse, dot) + charDelay;
+  });
+
+  const finalTimeout = setTimeout(() => {
+    if (running) {
+      stopTraining();
+    }
+  }, elapsed);
+
+  timeoutChain.push(finalTimeout);
+}
+
+document.getElementById("toggleBtn").addEventListener("click", () => {
+  if (running) {
+    stopTraining();
+  } else {
+    startTraining();
+  }
+});
+</script>
+
+</body>
+</html>
