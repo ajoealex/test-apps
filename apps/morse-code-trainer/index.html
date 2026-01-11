@@ -144,27 +144,62 @@
   .display {
     flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: min(30vw, 300px);
-    font-weight: bold;
     background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-    color: #48bb78;
-    user-select: none;
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    text-shadow: 0 0 20px rgba(72, 187, 120, 0.5);
-    transition: color 0.3s ease;
+    overflow: hidden;
   }
 
-  .display.playing {
-    color: #68d391;
+  .display-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    user-select: none;
+    transition: all 0.3s ease;
+  }
+
+  .display-char {
+    font-size: min(25vw, 250px);
+    color: #48bb78;
+    text-shadow: 0 0 20px rgba(72, 187, 120, 0.5);
+    border-right: 2px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .display-morse {
+    font-size: min(12vw, 120px);
+    color: #4299e1;
+    text-shadow: 0 0 20px rgba(66, 153, 225, 0.5);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.2em;
+  }
+
+  .display-section.playing {
     animation: pulse 0.5s ease-in-out;
+  }
+
+  .display-char.playing {
+    color: #68d391;
+  }
+
+  .display-morse.playing {
+    color: #63b3ed;
   }
 
   @keyframes pulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
+  }
+
+  @media (max-width: 600px) {
+    .display-char {
+      font-size: min(30vw, 150px);
+    }
+
+    .display-morse {
+      font-size: min(15vw, 80px);
+    }
   }
 
   @media (max-width: 600px) {
@@ -179,6 +214,10 @@
     button {
       padding: 12px 24px;
       font-size: 14px;
+    }
+
+    .row {
+      gap: 12px;
     }
   }
 </style>
@@ -227,7 +266,10 @@
 
   </div>
 
-  <div class="display" id="display">–</div>
+  <div class="display">
+    <div class="display-section display-char" id="displayChar"></div>
+    <div class="display-section display-morse" id="displayMorse"></div>
+  </div>
 
 </div>
 
@@ -327,8 +369,10 @@ function stopTraining() {
   if (navigator.vibrate) {
     navigator.vibrate(0);
   }
-  document.getElementById("display").textContent = "–";
-  document.getElementById("display").classList.remove("playing");
+  document.getElementById("displayChar").textContent = "";
+  document.getElementById("displayMorse").textContent = "";
+  document.getElementById("displayChar").classList.remove("playing");
+  document.getElementById("displayMorse").classList.remove("playing");
   document.getElementById("toggleBtn").textContent = "Start";
   document.getElementById("toggleBtn").classList.remove("active");
 }
@@ -348,7 +392,8 @@ function startTraining() {
 
   const dot = Number(document.getElementById("dotUnit").value);
   const charDelay = Number(document.getElementById("charDelay").value);
-  const display = document.getElementById("display");
+  const displayChar = document.getElementById("displayChar");
+  const displayMorse = document.getElementById("displayMorse");
 
   let sequence = [];
   if (useLetters) sequence.push(...'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
@@ -368,13 +413,16 @@ function startTraining() {
 
     const t = setTimeout(() => {
       if (!running) return;
-      display.textContent = char;
-      display.classList.add("playing");
+      displayChar.textContent = char;
+      displayMorse.textContent = morse;
+      displayChar.classList.add("playing");
+      displayMorse.classList.add("playing");
       vibrateMorse(morse, dot);
       playMorseSound(morse, dot);
 
       setTimeout(() => {
-        display.classList.remove("playing");
+        displayChar.classList.remove("playing");
+        displayMorse.classList.remove("playing");
       }, 100);
     }, elapsed);
 
