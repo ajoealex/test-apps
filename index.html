@@ -3,15 +3,327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Apps</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Web Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .background-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: float 25s ease-in-out infinite;
+        }
+
+        .shape-1 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: -150px;
+            right: -150px;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -8s;
+        }
+
+        .shape-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            top: 40%;
+            left: 40%;
+            transform: translate(-50%, -50%);
+            animation-delay: -16s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(40px, -40px) scale(1.1);
+            }
+            66% {
+                transform: translate(-30px, 30px) scale(0.9);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            display: inline-block;
+            margin-bottom: 24px;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.3));
+            }
+            50% {
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.5));
+            }
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a8edea 50%, #fed6e3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: -0.03em;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
+
+        .tiles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .tile {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 24px 28px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .tile::before {
+            content: '';
+            position: absolute;
+            top: 16px;
+            bottom: 16px;
+            left: 0;
+            width: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 0 4px 4px 0;
+            transition: all 0.4s ease;
+        }
+
+        .tile:hover {
+            transform: translateX(8px);
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tile:hover::before {
+            width: 6px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .tile:active {
+            transform: translateX(4px);
+        }
+
+        .tile-number {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.25);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            letter-spacing: 0.05em;
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s ease;
+        }
+
+        .tile:hover .tile-number {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .tile-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tile-name {
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+            transition: color 0.3s ease;
+        }
+
+        .tile:hover .tile-name {
+            color: #fff;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 80px;
+            padding: 24px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.875rem;
+            letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 24px 16px;
+            }
+
+            .header {
+                margin-bottom: 40px;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .tiles-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .tile {
+                padding: 24px 24px 24px 20px;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .tile {
+                gap: 16px;
+            }
+
+            .tile-number {
+                display: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .shape,
+            .logo,
+            .tile,
+            .tile::before {
+                animation: none;
+                transition: none;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1 class="text-center text-3xl font-bold leading-tight text-gray-900">Web Tools</h1>
-    <div id="tilesContainer" class="tiles-container"></div>
-    
-    <!-- Load JS files -->
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="40" height="40" rx="10" fill="url(#gradient)"/>
+                    <path d="M12 20L18 26L28 14" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
+                            <stop offset="0%" stop-color="#667eea"/>
+                            <stop offset="100%" stop-color="#764ba2"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <h1>Web Tools</h1>
+            <p class="subtitle">A collection of helpful utilities and testing tools</p>
+        </header>
+
+        <div id="tilesContainer" class="tiles-container"></div>
+
+        
+    </div>
+
     <script src="tilesData.js"></script>
-    <script src="main.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const tilesContainer = document.getElementById('tilesContainer');
+
+            tilesData.forEach((tile, index) => {
+                const tileElement = document.createElement('div');
+                tileElement.className = 'tile';
+
+                tileElement.innerHTML = `
+                    <span class="tile-number">${String(index + 1).padStart(2, '0')}</span>
+                    <div class="tile-content">
+                        <div class="tile-name">${tile.name}</div>
+                    </div>
+                `;
+
+                tileElement.addEventListener('click', () => {
+                    window.open(tile.link, '_blank', 'noopener,noreferrer');
+                });
+
+                tilesContainer.appendChild(tileElement);
+            });
+        });
+    </script>
 </body>
 </html>
