@@ -13,5 +13,6 @@ const tilesData = [
     { name: "image processing helper", link: "https://ajoealex.github.io/test-apps/apps/image-processing-helper/index.html" },
     { name: "AES Encryption Helper", link: "https://ajoealex.github.io/test-apps/apps/AES-Encryption/index.html" },
     { name: "ICON Generator", link: "https://ajoealex.github.io/test-apps/apps/icon-generator/index.html" },
-    { name: "Morse Code Trainer", link: "https://ajoealex.github.io/test-apps/apps/morse-code-trainer/index.html" }
+    { name: "Morse Code Trainer", link: "https://ajoealex.github.io/test-apps/apps/morse-code-trainer/index.html" },
+    { name: "Image Snip Helper", link: "https://ajoealex.github.io/test-apps/apps/image-snip-helper/index.html" }
 ];

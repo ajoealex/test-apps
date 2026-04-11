@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Snip Tool</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0f172a;
+      color: #1f2937;
+      overflow: hidden;
+    }
+
+    /* ── Toolbar ── */
+    #toolbar-wrapper {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+    }
+
+    #toolbar {
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      overflow: hidden;
+      max-height: 120px;
+      transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1),
+                  padding 0.35s cubic-bezier(0.4,0,0.2,1),
+                  opacity 0.25s ease;
+      opacity: 1;
+    }
+
+    #toolbar.collapsed {
+      max-height: 0;
+      opacity: 0;
+    }
+
+    #toolbar-inner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 20px;
+    }
+
+    #toolbar-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      padding: 5px 16px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #94a3b8;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    #toolbar-toggle:hover { background: #273549; color: #cbd5e1; }
+    #toolbar-toggle .chevron {
+      display: inline-block;
+      transition: transform 0.3s ease;
+      font-style: normal;
+      line-height: 1;
+    }
+    #toolbar-toggle.open .chevron { transform: rotate(180deg); }
+
+    /* ── Buttons ── */
+    button {
+      padding: 9px 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      white-space: nowrap;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+    button:hover { background: #1d4ed8; box-shadow: 0 2px 8px rgba(37,99,235,0.4); }
+    button:active { transform: scale(0.97); box-shadow: none; }
+    button:disabled { background: #334155; color: #64748b; cursor: not-allowed; transform: none; box-shadow: none; }
+    button:disabled:hover { background: #334155; box-shadow: none; }
+    .secondary { background: #475569; }
+    .secondary:hover { background: #334155; box-shadow: 0 2px 8px rgba(71,85,105,0.4); }
+    .btn-selecting { background: #d97706 !important; box-shadow: 0 0 0 3px rgba(217,119,6,0.4) !important; }
+
+    input[type="file"] {
+      font-size: 13px;
+      color: #cbd5e1;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 7px 10px;
+      cursor: pointer;
+    }
+    input[type="file"]::-webkit-file-upload-button {
+      background: #334155;
+      color: #e2e8f0;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    /* ── Status pills ── */
+    .status-pill {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      display: none;
+      white-space: nowrap;
+    }
+    .success-pill { color: #86efac; background: rgba(22,163,74,0.15); border: 1px solid rgba(134,239,172,0.3); }
+    .error-pill   { color: #fca5a5; background: rgba(220,38,38,0.15); border: 1px solid rgba(252,165,165,0.3); }
+
+    /* ── Canvas area ── */
+    #canvas-area {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      overflow: scroll;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding-top: 0; /* updated by JS */
+      transition: padding-top 0.35s cubic-bezier(0.4,0,0.2,1);
+      background: #0f172a;
+    }
+
+    #canvas-inner {
+      width: fit-content;
+      min-width: 100%;
+      min-height: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 24px;
+    }
+
+    canvas {
+      display: none;
+      background: #fff;
+      cursor: default;
+      flex-shrink: 0;
+    }
+    canvas.loaded { display: block; }
+    canvas.selecting { cursor: crosshair; }
+
+    #canvas-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #475569;
+      font-size: 15px;
+      letter-spacing: 0.01em;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* ── Modal ── */
+    #modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    #modal-overlay.open { display: flex; }
+
+    #modal-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 20px;
+      max-width: 90vw;
+      max-height: 90vh;
+      overflow: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    #modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    #modal-header span { font-size: 15px; font-weight: 600; color: #e2e8f0; }
+
+    #modal-close {
+      background: #334155;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+    #modal-close:hover { background: #475569; }
+
+    #modal-img {
+      max-width: 100%;
+      max-height: 75vh;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toolbar -->
+  <div id="toolbar-wrapper">
+    <div id="toolbar">
+      <div id="toolbar-inner">
+        <input type="file" id="imageInput" accept="image/*" />
+        <button id="captureSnipBtn" disabled>Capture Snip</button>
+        <button id="previewSnipBtn" class="secondary" disabled>Preview Snip</button>
+        <button id="downloadSnipBtn" class="secondary" disabled>Download Snip</button>
+        <button id="clearSnipBtn" class="secondary" disabled>Clear Snip</button>
+        <div id="successMessage" class="status-pill success-pill"></div>
+        <div id="errorMessage" class="status-pill error-pill"></div>
+      </div>
+    </div>
+    <div id="toolbar-toggle" class="open">
+      <i class="chevron">&#x25BE;</i>
+      <span id="toggleLabel">Controls</span>
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <div id="canvas-area">
+    <div id="canvas-inner">
+      <div id="canvas-placeholder">Upload an image to capture a snip</div>
+      <canvas id="mainCanvas"></canvas>
+    </div>
+  </div>
+
+  <!-- Preview Modal -->
+  <div id="modal-overlay">
+    <div id="modal-box">
+      <div id="modal-header">
+        <span>Snip Preview</span>
+        <button id="modal-close" class="secondary">Close</button>
+      </div>
+      <img id="modal-img" src="" alt="Snip preview" />
+    </div>
+  </div>
+
+  <script>
+    localStorage.clear();
+    const SNIP_KEY = 'aq__snip';
+
+    const imageInput      = document.getElementById('imageInput');
+    const captureSnipBtn  = document.getElementById('captureSnipBtn');
+    const previewSnipBtn  = document.getElementById('previewSnipBtn');
+    const downloadSnipBtn = document.getElementById('downloadSnipBtn');
+    const clearSnipBtn    = document.getElementById('clearSnipBtn');
+    const successMessage  = document.getElementById('successMessage');
+    const errorMessage    = document.getElementById('errorMessage');
+    const canvas            = document.getElementById('mainCanvas');
+    const ctx               = canvas.getContext('2d');
+    const canvasPlaceholder = document.getElementById('canvas-placeholder');
+    const canvasArea        = document.getElementById('canvas-area');
+    const toolbar         = document.getElementById('toolbar');
+    const toolbarToggle   = document.getElementById('toolbar-toggle');
+    const toggleLabel     = document.getElementById('toggleLabel');
+    const modalOverlay    = document.getElementById('modal-overlay');
+    const modalImg        = document.getElementById('modal-img');
+    const modalClose      = document.getElementById('modal-close');
+
+    let loadedImage = null;
+    let selectionMode = false;
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let currentSelection = null;
+    let lastCapturedBase64 = '';
+
+    // ── Helpers ──────────────────────────────────────────────
+    function showSuccess(msg) {
+      successMessage.textContent = msg;
+      successMessage.style.display = 'inline-block';
+      errorMessage.style.display = 'none';
+    }
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorMessage.style.display = 'inline-block';
+      successMessage.style.display = 'none';
+    }
+    function clearMessages() {
+      successMessage.style.display = 'none';
+      errorMessage.style.display = 'none';
+    }
+
+    // ── Toolbar collapse / expand ─────────────────────────────
+    function getToolbarHeight() {
+      const toggleH = toolbarToggle.getBoundingClientRect().height;
+      const toolbarH = toolbar.classList.contains('collapsed') ? 0 : toolbar.scrollHeight;
+      return toggleH + toolbarH;
+    }
+
+    function syncCanvasPadding() {
+      canvasArea.style.paddingTop = getToolbarHeight() + 'px';
+    }
+
+    function collapseToolbar() {
+      toolbar.classList.add('collapsed');
+      toolbarToggle.classList.remove('open');
+      toggleLabel.textContent = 'Show Controls';
+      syncCanvasPadding();
+    }
+
+    function expandToolbar() {
+      toolbar.classList.remove('collapsed');
+      toolbarToggle.classList.add('open');
+      toggleLabel.textContent = 'Controls';
+      syncCanvasPadding();
+    }
+
+    toolbarToggle.onclick = () => {
+      toolbar.classList.contains('collapsed') ? expandToolbar() : collapseToolbar();
+    };
+
+    toolbar.addEventListener('transitionend', syncCanvasPadding);
+    window.addEventListener('resize', syncCanvasPadding);
+    syncCanvasPadding();
+
+    // ── Canvas helpers ────────────────────────────────────────
+    function getPos(e) {
+      const r = canvas.getBoundingClientRect();
+      const sx = canvas.width / r.width;
+      const sy = canvas.height / r.height;
+      return { x: (e.clientX - r.left) * sx, y: (e.clientY - r.top) * sy };
+    }
+
+    function normalize(x1, y1, x2, y2) {
+      return { x: Math.min(x1,x2), y: Math.min(y1,y2), width: Math.abs(x2-x1), height: Math.abs(y2-y1) };
+    }
+
+    function draw(sel = null) {
+      if (!loadedImage) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(loadedImage, 0, 0);
+      if (sel) {
+        ctx.fillStyle = 'rgba(37,99,235,0.2)';
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 2;
+        ctx.fillRect(sel.x, sel.y, sel.width, sel.height);
+        ctx.strokeRect(sel.x, sel.y, sel.width, sel.height);
+      }
+    }
+
+    // ── Upload (auto on file change) ──────────────────────────
+    imageInput.onchange = () => {
+      clearMessages();
+      const file = imageInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          loadedImage = img;
+          canvas.width  = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          canvas.style.width  = img.naturalWidth  + 'px';
+          canvas.style.height = img.naturalHeight + 'px';
+          canvas.classList.add('loaded');
+          canvasPlaceholder.style.display = 'none';
+          draw();
+          // Auto-enter selection mode
+          selectionMode = true;
+          canvas.classList.add('selecting');
+          showSuccess(`Loaded — ${img.naturalWidth}×${img.naturalHeight}px · Draw to select a region`);
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    canvas.onmousedown = e => {
+      if (!selectionMode) return;
+      isDragging = true;
+      const p = getPos(e);
+      startX = p.x; startY = p.y;
+    };
+
+    canvas.onmousemove = e => {
+      if (!isDragging) return;
+      const p = getPos(e);
+      currentSelection = normalize(startX, startY, p.x, p.y);
+      draw(currentSelection);
+    };
+
+    canvas.onmouseup = e => {
+      if (!isDragging) return;
+      isDragging = false;
+      selectionMode = false;
+      canvas.classList.remove('selecting');
+      captureSnipBtn.disabled = false;
+      downloadSnipBtn.disabled = false;
+      clearSnipBtn.disabled = false;
+      showSuccess('Region selected — click Capture Snip');
+    };
+
+    // ── Snip helper ───────────────────────────────────────────
+    function buildSnipDataURL() {
+      const c = document.createElement('canvas');
+      c.width  = Math.round(currentSelection.width);
+      c.height = Math.round(currentSelection.height);
+      const cctx = c.getContext('2d');
+      cctx.drawImage(
+        loadedImage,
+        currentSelection.x, currentSelection.y,
+        currentSelection.width, currentSelection.height,
+        0, 0,
+        c.width, c.height
+      );
+      return c.toDataURL('image/png');
+    }
+
+    // ── Capture snip ─────────────────────────────────────────
+    captureSnipBtn.onclick = () => {
+      if (!currentSelection) { showError('No selection'); return; }
+      const b64 = buildSnipDataURL();
+      lastCapturedBase64 = b64;
+      localStorage.setItem(SNIP_KEY, b64);
+      previewSnipBtn.disabled = false;
+      clearSnipBtn.disabled = false;
+      showSuccess('Snip captured');
+      collapseToolbar();
+    };
+
+    // ── Download snip ─────────────────────────────────────────
+    downloadSnipBtn.onclick = () => {
+      if (!currentSelection) { showError('No selection'); return; }
+      const b64 = buildSnipDataURL();
+      lastCapturedBase64 = b64;
+      localStorage.setItem(SNIP_KEY, b64);
+      const a = document.createElement('a');
+      a.href = b64;
+      a.download = 'snip.png';
+      a.click();
+      previewSnipBtn.disabled = false;
+      clearSnipBtn.disabled = false;
+      showSuccess('Snip downloaded');
+      collapseToolbar();
+    };
+
+    // ── Preview snip (modal) ──────────────────────────────────
+    previewSnipBtn.onclick = () => {
+      const b64 = localStorage.getItem(SNIP_KEY) || lastCapturedBase64;
+      if (!b64) { showError('No snip found'); return; }
+      modalImg.src = b64;
+      modalOverlay.classList.add('open');
+    };
+
+    // ── Clear snip ────────────────────────────────────────────
+    clearSnipBtn.onclick = () => {
+      currentSelection = null;
+      lastCapturedBase64 = '';
+      localStorage.removeItem(SNIP_KEY);
+      draw();
+      modalImg.src = '';
+      modalOverlay.classList.remove('open');
+      captureSnipBtn.disabled = true;
+      previewSnipBtn.disabled = true;
+      downloadSnipBtn.disabled = true;
+      clearSnipBtn.disabled = true;
+      selectionMode = true;
+      canvas.classList.add('selecting');
+      showSuccess('Cleared — draw a new region');
+    };
+
+    modalClose.onclick = () => modalOverlay.classList.remove('open');
+    modalOverlay.onclick = e => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); };
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') modalOverlay.classList.remove('open'); });
+  </script>
+</body>
+</html>
