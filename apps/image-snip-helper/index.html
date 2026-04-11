@@ -484,6 +484,27 @@
     modalClose.onclick = () => modalOverlay.classList.remove('open');
     modalOverlay.onclick = e => { if (e.target === modalOverlay) modalOverlay.classList.remove('open'); };
     document.addEventListener('keydown', e => { if (e.key === 'Escape') modalOverlay.classList.remove('open'); });
+
+    // ── Programmatic image load (called by ACCELQ Java commands) ─────────
+    window.aqLoadImage = function(dataUrl) {
+      clearMessages();
+      const img = new Image();
+      img.onload = function() {
+        loadedImage = img;
+        canvas.width  = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        canvas.style.width  = img.naturalWidth  + 'px';
+        canvas.style.height = img.naturalHeight + 'px';
+        canvas.classList.add('loaded');
+        canvasPlaceholder.style.display = 'none';
+        draw();
+        selectionMode = true;
+        canvas.classList.add('selecting');
+        captureSnipBtn.disabled = true;
+        showSuccess(`Loaded \u2014 ${img.naturalWidth}\u00d7${img.naturalHeight}px \u00b7 Draw to select a region`);
+      };
+      img.src = dataUrl;
+    };
   </script>
 </body>
 </html>
