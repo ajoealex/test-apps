@@ -19,5 +19,6 @@ const tilesData = [
     { name: "Content Transform Kit", link: "https://ajoealex.github.io/transformkit/"},
     { name: "Json Path Finder", link: "https://ajoealex.github.io/json-path-finder/"},
     { name: "ZoneSync", link: "https://ajoealex.github.io/ZoneSync/"},
-    { name: "API Test", link: "http://api-test.automationhub.in/"}
+    { name: "API Test", link: "http://api-test.automationhub.in/"},
+    { name: "PixelForge", link: "https://ajoealex.github.io/PixelForge/"}
 ];
